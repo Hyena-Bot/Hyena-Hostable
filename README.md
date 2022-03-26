@@ -21,7 +21,7 @@ Become a patron, by simply clicking on this button **very appreciated!**:
 [![](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/hyenabot)
 
 ### ➜ Supporters
-[![Stargazers repo roster for @Hyena-Bot/Hyena](https://reporoster.com/stars/Hyena-Bot/Hyena)](https://github.com/Hyena-Bot/Hyena/stargazers)
+[![Stargazers repo roster for @Hyena-Bot/Hyena-Hostable](https://reporoster.com/stars/Hyena-Bot/Hyena-Hostable)](https://github.com/Hyena-Bot/Hyena-Hostable/stargazers)
 
 ### ➜ How to colaborate here
 
