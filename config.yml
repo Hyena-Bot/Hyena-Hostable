@@ -1,0 +1,26 @@
+bot_config:
+    bot_name: Hyena
+    bot_description: The customisable and self hostable Hyena.
+    bot_prefix: "-" # your bot's prefix in quotation marks 
+    owners_id:
+        - 711444754080071714
+        - 832660720495362078
+        - 918703165648539700
+    cogs_not_to_load: 
+        - ""
+    # add cogs which you dont want to use in a list for example:
+    # cogs_not_to_load: 
+    #     - "file_name_of_cog.py"
+    #     - "file_name_of_cog2.py" 
+    # etc.....
+    errors_channel: 794467788332728365 # the secret channel to get bot errors
+    statuses: # statuses you want to be displayed in your bot
+        - with the ban hammer!
+        - hey I'm the new and improved hostable hyena!
+        - https://github.com/Hyena-Bot
+    colors:
+        - "0x3A4047"
+        - "0xFFFDFC"
+    success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good
+    # here's a good one-
+    # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
