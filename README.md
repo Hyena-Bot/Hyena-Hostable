@@ -38,28 +38,22 @@ $ cd Hyena-Hostable
 Step 2: Setup virtual environment
 This can simply be done by doing the following:
 ``sh
-# Linux/mac
-$ python3 -m venv venv 
+$ python3 -m venv venv # Linux/mac
 
-# Windows
-$ py -m venv venv 
+$ py -m venv venv # windows
 ``
 
 Step 3: Activating virtual environment and setting up dependencies
 ``sh
-# Linux/mac
-$ source ../venv/bin/activate 
+$ source ../venv/bin/activate  # Linux/mac
 
-# Windows
-$ venv\Scripts\activate.bat 
+$ venv\Scripts\activate.bat # Windows
 ``
 Now our virtual env should be acitvated, time to install the packages
 ``sh
-# Linux/mac
-(venv) python3 -m pip install -U -r requirements.txt 
+(venv) python3 -m pip install -U -r requirements.txt  # Linux/mac
 
-# Windows
-(venv) py -m pip install -U -r requirements.txt
+(venv) py -m pip install -U -r requirements.txt # Windows
 ``
 
 
