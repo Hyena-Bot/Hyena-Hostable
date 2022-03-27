@@ -13,11 +13,12 @@ bot_config:
     #     - "file_name_of_cog.py"
     #     - "file_name_of_cog2.py" 
     # etc.....
-    errors_channel: 794467788332728365 # the secret channel to get bot errors
+    errors_channel: 814895166141628426 # the secret channel to get bot errors
     statuses: # statuses you want to be displayed in your bot
         - with the ban hammer!
         - hey I'm the new and improved hostable hyena!
         - https://github.com/Hyena-Bot
+    guild_id: 794467787690344508 # your server's ID
     colors:
         - "0x3A4047"
         - "0xFFFDFC"
