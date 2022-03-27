@@ -35,6 +35,7 @@ import random
 import traceback
 
 import discord
+import logging
 import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
@@ -69,6 +70,10 @@ class Bot(commands.Bot):
             and not (cog in self.config["bot_config"]["cogs_not_to_load"])
         ]
         self.success_emoji = self.config["bot_config"]["success_emoji"]
+        self.logger = self._configure_logging()
+
+        from utils import tools
+        self.tools = tools
 
     async def setup_hook(self):
         try:
@@ -76,10 +81,13 @@ class Bot(commands.Bot):
                 try:
                     await self.load_extension(cog)
                     print(f"Loaded {cog[5:]}")
+                    self.logger.info(f"Loaded {cog[5:]}")
                 except Exception as e:
                     raise e
         except Exception as e:
             raise e
+
+        # self.console = await self.fetch_channel(self.config["bot_config"]["errors_channel"])
 
     def run(self):
         super().run(self.secrets["TOKEN"])
@@ -87,7 +95,23 @@ class Bot(commands.Bot):
     async def on_ready(self):
         self.change_status.start()
         print(f"Logged in as {self.user} (ID: {self.user.id})")
+        await self.tree.sync(guild=discord.Object(self.config["bot_config"]["guild_id"]))
+        print("Initial: synced slash commands")
         print("------")
+
+        self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
+        self.logger.info("Initial: synced slash commands")
+
+    async def on_error(self, event_method: str, *args, **kwargs) -> None:
+        self.logger.error(traceback.format_exc())
+        console = self.get_channel(self.config["bot_config"]["errors_channel"])
+        embeds = self.tools.error_to_embed()
+        context_embed = discord.Embed(
+            title="Context",
+            description=f"**Event**: {event_method}",
+            color=discord.Color.red(),
+        )
+        await console.send(embeds=[*embeds, context_embed])
 
     async def _get_bot_prefix(self):
         return self.config["bot_config"]["bot_config"]
@@ -97,7 +121,7 @@ class Bot(commands.Bot):
             try:
                 config = yaml.safe_load(f)
             except yaml.YAMLError as exc:
-                print(exc)
+                self.logger.critical(str(exc))
 
         return config
 
@@ -129,6 +153,16 @@ class Bot(commands.Bot):
 
     async def on_message(self, message):
         await self.process_commands(message)
+
+    def _configure_logging(self):
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+
+        file_handler = logging.FileHandler("bot_logs.log", mode="w")
+        file_handler.setFormatter(logging.Formatter("%(levelname)s:%(filename)s:%(lineno)d:%(asctime)s:%(message)s"))
+        logger.addHandler(file_handler)
+
+        return logger
 
     async def handle_cog_update(self, ctx, cog, _type):
         if cog in ["*", "all"]:

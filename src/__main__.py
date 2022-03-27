@@ -62,6 +62,15 @@ async def reload(ctx, cog):
 
     await bot.handle_cog_update(ctx, cog, "reload")
 
+@bot.command(name="sync")
+async def _sync(ctx):
+    if ctx.author.id not in bot.owner_ids:
+        return await ctx.send("You are not the developer!")
+
+    await bot.tree.sync(guild=discord.Object(bot.config["bot_config"]["guild_id"]))
+    await ctx.message.add_reaction(bot.success_emoji)
+    print("Synced slash commands, requested by", str(ctx.author))
+
 
 @bot.command(name="eval")
 async def eval_command(ctx, *, code='await ctx.send("Hello World")'):
