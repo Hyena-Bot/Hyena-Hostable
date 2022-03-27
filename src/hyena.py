@@ -96,14 +96,9 @@ class Bot(commands.Bot):
     async def on_ready(self):
         self.change_status.start()
         print(f"Logged in as {self.user} (ID: {self.user.id})")
-        await self.tree.sync(
-            guild=discord.Object(self.config["bot_config"]["guild_id"])
-        )
-        print("Initial: synced slash commands")
         print("------")
 
         self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
-        self.logger.info("Initial: synced slash commands")
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
