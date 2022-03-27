@@ -62,6 +62,7 @@ async def reload(ctx, cog):
 
     await bot.handle_cog_update(ctx, cog, "reload")
 
+
 @bot.command(name="sync")
 async def _sync(ctx):
     if ctx.author.id not in bot.owner_ids:

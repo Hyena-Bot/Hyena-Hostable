@@ -1,6 +1,8 @@
-import traceback
-import discord
 import math
+import traceback
+
+import discord
+
 
 def error_to_embed(error: Exception = None):
     traceback_text: str = (

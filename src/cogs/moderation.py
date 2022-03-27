@@ -30,11 +30,10 @@ Conditions:
 Kindly check out ../LICENSE
 """
 
+import discord
+from discord import app_commands
 from discord.ext import commands
 
-from discord import app_commands
-
-import discord
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -44,5 +43,8 @@ class Moderation(commands.Cog):
     async def _ping(self, interaction: discord.Interaction):
         await interaction.response.send_message("Pong!")
 
+
 async def setup(bot):
-    await bot.add_cog(Moderation(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"]))
+    await bot.add_cog(
+        Moderation(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"])
+    )

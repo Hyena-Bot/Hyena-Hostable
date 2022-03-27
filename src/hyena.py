@@ -30,12 +30,12 @@ Conditions:
 Kindly check out ../LICENSE
 """
 
+import logging
 import os
 import random
 import traceback
 
 import discord
-import logging
 import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
@@ -73,6 +73,7 @@ class Bot(commands.Bot):
         self.logger = self._configure_logging()
 
         from utils import tools
+
         self.tools = tools
 
     async def setup_hook(self):
@@ -95,7 +96,9 @@ class Bot(commands.Bot):
     async def on_ready(self):
         self.change_status.start()
         print(f"Logged in as {self.user} (ID: {self.user.id})")
-        await self.tree.sync(guild=discord.Object(self.config["bot_config"]["guild_id"]))
+        await self.tree.sync(
+            guild=discord.Object(self.config["bot_config"]["guild_id"])
+        )
         print("Initial: synced slash commands")
         print("------")
 
@@ -159,7 +162,11 @@ class Bot(commands.Bot):
         logger.setLevel(logging.DEBUG)
 
         file_handler = logging.FileHandler("bot_logs.log", mode="w")
-        file_handler.setFormatter(logging.Formatter("%(levelname)s:%(filename)s:%(lineno)d:%(asctime)s:%(message)s"))
+        file_handler.setFormatter(
+            logging.Formatter(
+                "%(levelname)s:%(filename)s:%(lineno)d:%(asctime)s:%(message)s"
+            )
+        )
         logger.addHandler(file_handler)
 
         return logger
