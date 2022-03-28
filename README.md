@@ -11,7 +11,7 @@ The new and improved Hyena, the one customisable, and the one you can use howeve
 - Easy to use
 
 ### ➜ Support
-Join our support & community discord server!
+Join our support & community discord server for any queries or support in general!
 
 [![](https://i.ibb.co/Y3kq58Z/Untitled.png)](https://discord.gg/cHYWdK5GNt)
 
@@ -32,41 +32,45 @@ Step 1: Fork & Clone the repository
 
 ```sh
 $ git clone link-to-my-forked-repository.git hyenabot # usually link will be https://github.com/YourUserName/Hyena-Hostable
-$ cd hyenabot
+$ cd Hyena-Hostable
 ```
 
-➜ How to install discord.py 2.0.0a
-
-- Firstly, setup a virtual environment
+Step 2: Setup virtual environment
+This can simply be done by doing the following:
 
 ```sh
-$ pip install virtualenv
-$ virtualenv venv
-$ ./venv/bin/activate # windows
-$ source ./venv/bin/activate # macos or linux
+$ virtualenv venv # Linux/mac
+
+$ py -m venv venv # windows
 ```
 
-- Then install the 2.0.0a
+Step 3: Activating virtual environment and setting up dependencies
 
 ```sh
-$ git clone https://github.com/Rapptz/discord.py discord.py
-$ cd discord.py
-$ pip install -U .[voice]
+$ source ./venv/bin/activate  # Linux/mac # from root dir
+
+$ venv\Scripts\activate.bat # Windows
+```
+Now our virtual env should be acitvated, time to install the packages.
+```sh
+(venv) pip install -U -r requirements.txt  # Linux/mac
+
+(venv) py -m pip install -U -r requirements.txt # Windows
 ```
 
-Step 2: Checkout a new branch
+Step 4: Checkout a new branch
 
 ```sh
 $ git checkout -b my-new-feature
 ```
 
-Step 3: Code the feature
+Step 5: Code the feature
 <br/>
 Pick a feature from the Issues and code it
 <br/>
 Am i supposed to tell you how to do this one too?
 
-Step 4: Commit the feature
+Step 6: Commit the feature
 
 ```sh
 $ git commit -m "define your feature here"
@@ -76,13 +80,13 @@ $ git commit -m "define your feature here"
   <br/>
 - [How to write a proper commit message](https://gist.github.com/develar/273e2eb938792cf5f86451fbac2bcd51)
 
-Step 5: Push the feature
+Step 7: Push the feature
 
 ```sh
 $ git push origin my-new-feature # branch name should be same as the one you checked out
 ```
 
-Step 6: Create a pull request
+Step 8: Create a pull request
 
 - Go to the your forked repository
 - A button like this will appear, click on it:
