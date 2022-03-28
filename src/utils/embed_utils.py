@@ -5,8 +5,10 @@ from hyena import Bot
 
 def success_embed(bot: Bot, *, title: str = None, desc: str = None, pfp_url: str = None, color = None) -> Embed:
     """
-    Creates an embed for moderation actions.\n
-    Accepts the following kwargs:
+    Creates an success embed for when actions are done properly .\n
+    
+    Accepts the following args and kwargs:
+        `bot`: commands.Bot - the bot object. (arg)
         `title`: str - the title of embed.
         `desc`: str - the description of embed.
         `pfp_url`: str - the users profile picture's url.
