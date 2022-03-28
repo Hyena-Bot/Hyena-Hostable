@@ -35,24 +35,14 @@ from typing import Optional
 import discord
 from discord import app_commands
 from discord.ext import commands
-<<<<<<< HEAD
-from utils.embed_utils import success_embed
-=======
 
 from utils import checks
 
->>>>>>> f50b6f790b2229e63b8f41ce1b45a10d85f9c68d
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-<<<<<<< HEAD
-    @commands.command(name="ping")
-    async def ping(self, ctx):
-        emb = success_embed(ctx.bot, title = "test")
-        return await ctx.send("pong", embed = emb)
-=======
     @app_commands.command(name="ban", description="Yeet someone out of the server!")
     @app_commands.describe(
         member="The member to ban",
@@ -197,7 +187,6 @@ class Moderation(commands.Cog):
                     )
                     success = True
                     unbanned_user = ban_entry.user
->>>>>>> f50b6f790b2229e63b8f41ce1b45a10d85f9c68d
 
         if success:
             # ... modlogs and others to be added later
