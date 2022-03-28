@@ -29,7 +29,7 @@ Conditions:
 
 Kindly check out ../LICENSE
 """
-
+#
 from typing import Optional
 
 import discord
