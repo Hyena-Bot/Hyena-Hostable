@@ -1,8 +1,8 @@
 bot_config:
-    bot_name: Hyena
-    bot_description: The customisable and self hostable Hyena.
+    bot_name: Hyena # your bot's name
+    bot_description: The customisable and self hostable Hyena. # your bot's description'
     bot_prefix: "-" # your bot's prefix in quotation marks 
-    owners_id:
+    owners_id: # the IDs of the owners of the bots
         - 711444754080071714
         - 832660720495362078
         - 918703165648539700
@@ -19,7 +19,7 @@ bot_config:
         - hey I'm the new and improved hostable hyena!
         - https://github.com/Hyena-Bot
     guild_id: 794467787690344508 # your server's ID
-    colors:
+    colors:              # theme color of the bot (you will see them in the embeds) (in python hex format)
         - "0x3A4047"
         - "0xFFFDFC"
     success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good

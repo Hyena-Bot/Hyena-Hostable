@@ -30,7 +30,9 @@ Conditions:
 Kindly check out ../LICENSE
 """
 
+import contextlib
 import traceback
+import typing
 
 import discord
 
@@ -39,12 +41,90 @@ from hyena import Bot
 bot = Bot()  # dont pass in things here, pass in ./hyena.py
 
 
+@bot.tree.error
+async def app_command_error(
+    interaction: discord.Interaction,
+    command: typing.Union[
+        discord.app_commands.Command, discord.app_commands.ContextMenu
+    ],
+    error: discord.app_commands.AppCommandError,
+):
+    if isinstance(error, bot.checks.CheckFailed):
+        await interaction.response.send_message(str(error))
+
+    else:
+        bot.logger.error(str(error))
+        console = bot.get_channel(bot.config["bot_config"]["errors_channel"])
+        embed = discord.Embed(
+            title="Error",
+            description="An unknown error has occurred and my developer has been notified of it.",
+            color=discord.Color.red(),
+        )
+        with contextlib.suppress(discord.NotFound, discord.Forbidden):
+            try:
+                await interaction.response.send_message(embed=embed)
+            except:
+                pass
+
+        traceback_embeds = bot.tools.error_to_embed(error)
+
+        info_embed = discord.Embed(
+            title="Message content",
+            description="```\n"
+            + discord.utils.escape_markdown(interaction.command.name)
+            + "\n```",
+            color=discord.Color.red(),
+        )
+
+        value = (
+            (
+                "**Name**: {0.name}\n"
+                "**ID**: {0.id}\n"
+                "**Created**: {0.created_at}\n"
+                "**Joined**: {0.me.joined_at}\n"
+                "**Member count**: {0.member_count}\n"
+                "**Permission integer**: {0.me.guild_permissions.value}"
+            ).format(interaction.guild)
+            if interaction.guild
+            else "None"
+        )
+
+        info_embed.add_field(name="Guild", value=value)
+        if isinstance(interaction.channel, discord.TextChannel):
+            value = (
+                "**Type**: TextChannel\n"
+                "**Name**: {0.name}\n"
+                "**ID**: {0.id}\n"
+                "**Created**: {0.created_at}\n"
+                "**Permission integer**: {1}\n"
+            ).format(
+                interaction.channel,
+                interaction.channel.permissions_for(interaction.guild.me).value,
+            )
+        else:
+            value = (
+                "**Type**: DM\n" "**ID**: {0.id}\n" "**Created**: {0.created_at}\n"
+            ).format(interaction.channel)
+
+        info_embed.add_field(name="Channel", value=value)
+
+        # User info
+        value = (
+            "**Name**: {0}\n" "**ID**: {0.id}\n" "**Created**: {0.created_at}\n"
+        ).format(interaction.user)
+
+        info_embed.add_field(name="User", value=value)
+
+        await console.send(embeds=[*traceback_embeds, info_embed])
+
+
 @bot.command(name="load")
 async def load(ctx, cog):
     if ctx.author.id not in bot.owner_ids:
         return await ctx.send("You are not the developer!")
 
     await bot.handle_cog_update(ctx, cog, "load")
+    bot.logger.info(f"Loaded {cog}")
 
 
 @bot.command(name="unload")
@@ -53,6 +133,7 @@ async def unload(ctx, cog):
         return await ctx.send("You are not the developer!")
 
     await bot.handle_cog_update(ctx, cog, "unload")
+    bot.logger.info(f"Unloaded {cog}")
 
 
 @bot.command(name="reload")
@@ -61,6 +142,7 @@ async def reload(ctx, cog):
         return await ctx.send("You are not the developer!")
 
     await bot.handle_cog_update(ctx, cog, "reload")
+    bot.logger.info(f"Reloaded {cog}")
 
 
 @bot.command(name="sync")
