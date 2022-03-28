@@ -6,6 +6,7 @@ bot_config:
         - 711444754080071714
         - 832660720495362078
         - 918703165648539700
+        - 921020428791742515
     cogs_not_to_load: 
         - ""
     # add cogs which you dont want to use in a list for example:

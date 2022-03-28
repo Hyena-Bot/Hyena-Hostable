@@ -1,5 +1,5 @@
 from discord.ext import commands
-
+from utils.embed_utils import success_embed
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -7,7 +7,8 @@ class Moderation(commands.Cog):
 
     @commands.command(name="ping")
     async def ping(self, ctx):
-        return await ctx.send("pong")
+        emb = success_embed(ctx.bot, title = "test")
+        return await ctx.send("pong", embed = emb)
 
     # ...
 
