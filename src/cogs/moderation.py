@@ -30,6 +30,8 @@ Conditions:
 Kindly check out ../LICENSE
 """
 
+import asyncio
+import datetime
 from typing import Optional
 
 import discord
@@ -195,6 +197,68 @@ class Moderation(commands.Cog):
             await interaction.response.send_message(
                 f"Cannot Find `{member}`, \nNOTE: You can send both IDs and their proper names whichever you like the most :)"
             )
+
+    @app_commands.command(name="purge", description="Clear messages from a channel")
+    @app_commands.describe(
+        amount="number of messages to purge, use [all | max] to clear maximum",
+        member="the member whose messages to purge",
+    )
+    @checks._has_interaction_permission(manage_messages=True)
+    async def _purge(
+        self,
+        interaction: discord.Interaction,
+        amount: str,
+        member: Optional[discord.Member] = None,
+    ):
+        await interaction.response.defer(thinking=True)
+        hist_gen = interaction.channel.history(limit=2)
+        hist = [m async for m in hist_gen]
+        created_at = (
+            datetime.datetime.now(datetime.timezone.utc) - hist[1].created_at
+        ).days
+        back = datetime.datetime.utcnow() - datetime.timedelta(days=14)
+
+        if int(created_at) >= 14:
+            return await interaction.followup.send(
+                "Message is more than 2 weeks old! No messages were deleted :|"
+            )
+
+        if amount == "all" or amount == "max":
+            amount = 1000
+
+        try:
+            amount = int(amount)
+        except ValueError:
+            return await interaction.followup.send(
+                "Only `Integers (Numbers), all, nuke` will be accepted"
+            )
+
+        if amount > 1000:
+            return await interaction.followup.send(
+                "Smh so many messages :| Delete the channel instead dumb"
+            )
+
+        if member is not None:
+            purged_messages = await interaction.channel.purge(
+                limit=amount,
+                after=back,
+                check=lambda x: not x.pinned and x.author.id == member.id,
+            )
+            p = len(purged_messages)
+            await interaction.channel.send(
+                f"Successfully purged `{p}` messages from `{member.name}` in the last `{amount}` messages!",
+                delete_after=2,
+            )
+        else:
+            purged_messages = await interaction.channel.purge(
+                limit=amount,
+                after=back,
+                check=lambda message_to_check: not message_to_check.pinned,
+            )
+            p = len(purged_messages)
+            await interaction.channel.send(f"Purged `{p}` messages!", delete_after=2)
+
+        await asyncio.sleep(2)
 
 
 async def setup(bot):
