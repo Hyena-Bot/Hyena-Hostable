@@ -72,9 +72,10 @@ class Bot(commands.Bot):
         self.success_emoji = self.config["bot_config"]["success_emoji"]
         self.logger = self._configure_logging()
 
-        from utils import tools
+        from utils import checks, tools
 
         self.tools = tools
+        self.checks = checks
 
     async def setup_hook(self):
         try:
@@ -109,7 +110,7 @@ class Bot(commands.Bot):
             description=f"**Event**: {event_method}",
             color=discord.Color.red(),
         )
-        await console.send(embeds=[*embeds, context_embed])
+        await self.console.send(embeds=[*embeds, context_embed])
 
     async def _get_bot_prefix(self):
         return self.config["bot_config"]["bot_config"]
