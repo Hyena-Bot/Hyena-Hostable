@@ -61,6 +61,9 @@ async def app_command_error(
     elif isinstance(error, app_commands.errors.CommandOnCooldown):
         await interaction.response.send_message("> " + str(error))
 
+    elif isinstance(error, app_commands.errors.CommandInvokeError):
+        await interaction.response.send_message("> " + str(error.original))
+
     else:
         bot.logger.error(str(error))
         console = bot.get_channel(bot.config["bot_config"]["errors_channel"])
