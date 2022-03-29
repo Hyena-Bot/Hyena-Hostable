@@ -65,6 +65,20 @@ class Moderation(commands.Cog):
         delete_message: app_commands.Choice[int],
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Ban a user from the server.
+
+        **Args:**
+        • `<member>` - The member to ban
+        • `<delete_message>` - How much of their message history to delete [0|1|7]
+        • `[reason]` - The reason to ban the member
+
+        **Syntax:**
+        ```
+        /ban <member> <delete_message - 0|1|7> [reason]
+        ```
+        """
         if (
             (
                 interaction.user.top_role > member.top_role
@@ -126,6 +140,20 @@ class Moderation(commands.Cog):
         delete_message: app_commands.Choice[int],
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Bans and immediately unbans a member to act as a purging kick.
+
+        **Args:**
+        • `<member>` - The member to softban
+        • `<delete_message>` - How much of their message history to delete [1|7]
+        • `[reason]` - The reason to softban the member
+
+        **Syntax:**
+        ```
+        /softban <member> <delete_message - 1|7> [reason]
+        ```
+        """
         if (
             (
                 interaction.user.top_role > member.top_role
@@ -166,9 +194,7 @@ class Moderation(commands.Cog):
                     "Error, this person has a higher or equal role to you"
                 )
 
-    @app_commands.command(
-        name="kick", description="Kick someone out of the server temporarily!"
-    )
+    @app_commands.command(name="kick", description="Kick someone out of the server!")
     @app_commands.describe(
         member="The member to kick",
         reason="The reason to kick the member",
@@ -181,6 +207,19 @@ class Moderation(commands.Cog):
         member: discord.Member,
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Kick someone out of the server!
+
+        **Args:**
+        • `<member>` - The member to kick
+        • `[reason]` - The reason to kick the member
+
+        **Syntax:**
+        ```
+        /kick <member> [reason]
+        ```
+        """
         if (
             (
                 interaction.user.top_role > member.top_role
@@ -228,6 +267,19 @@ class Moderation(commands.Cog):
         member: str,
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Revoke a user's man.
+
+        **Args:**
+        • `<member>` - The user to unban
+        • `[reason]` - The reason to unban the member
+
+        **Syntax:**
+        ```
+        /unban <member> [reason]
+        ```
+        """
         member = str(member).strip()
         bans = await interaction.guild.bans()
         unbanned_user = None
@@ -276,6 +328,19 @@ class Moderation(commands.Cog):
         amount: str,
         member: Optional[discord.Member] = None,
     ):
+        """
+        **Description:**
+        Purge an amount of messages from a channel.
+
+        **Args:**
+        • `<amount>` - Number of messages to purge, use [all | max] to clear maximum
+        • `[member]` - The member whose messages to purge
+
+        **Syntax:**
+        ```
+        /purge <amount> [member]
+        ```
+        """
         await interaction.response.defer(thinking=True)
         hist_gen = interaction.channel.history(limit=2)
         hist = [m async for m in hist_gen]
@@ -336,6 +401,19 @@ class Moderation(commands.Cog):
     async def _nick(
         self, interaction, member: discord.Member, nickname: Optional[str] = None
     ):
+        """
+        **Description:**
+        Change the nickname of a member/you.
+
+        **Args:**
+        • `<member>` - The member to rename
+        • `[nickname]` - Reason for unbanning user
+
+        **Syntax:**
+        ```
+        /nick <member> [nickname]
+        ```
+        """
         if nickname == None:
             nickname = member.name
 
@@ -382,6 +460,18 @@ class Moderation(commands.Cog):
     @app_commands.describe(channel="The channel to lock")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def _lock(self, interaction, channel: Optional[discord.TextChannel] = None):
+        """
+        **Description:**
+        Lock a channel so that people can't talk in it.
+
+        **Args:**
+        • `[channel]` - The channel to lock
+
+        **Syntax:**
+        ```
+        /lock [channel]
+        ```
+        """
         if channel is None:
             channel = interaction.channel
 
@@ -407,6 +497,18 @@ class Moderation(commands.Cog):
     @app_commands.describe(channel="The channel to unlock")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def _unlock(self, interaction, channel: Optional[discord.TextChannel] = None):
+        """
+        **Description:**
+        Unlock channel to give access to the people to talk in the channel.
+
+        **Args:**
+        • `[channel]` - The channel to unlock
+
+        **Syntax:**
+        ```
+        /unlock [channel]
+        ```
+        """
         if channel is None:
             channel = interaction.channel
 
