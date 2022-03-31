@@ -35,6 +35,7 @@ import traceback
 import typing
 
 import discord
+from discord import app_commands
 
 from hyena import Bot
 
@@ -49,8 +50,19 @@ async def app_command_error(
     ],
     error: discord.app_commands.AppCommandError,
 ):
-    if isinstance(error, bot.checks.CheckFailed):
-        await interaction.response.send_message(str(error))
+    # if isinstance(error, bot.checks.CheckFailed):
+    #     await interaction.response.send_message(str(error))
+
+    if isinstance(error, app_commands.errors.MissingPermissions):
+        await interaction.response.send_message(
+            f"> You are missing `{', '.join(error.missing_permissions)}` permission(s) to run this command"
+        )
+
+    elif isinstance(error, app_commands.errors.CommandOnCooldown):
+        await interaction.response.send_message("> " + str(error))
+
+    elif isinstance(error, app_commands.errors.CommandInvokeError):
+        await interaction.response.send_message("> " + str(error.original))
 
     else:
         bot.logger.error(str(error))
