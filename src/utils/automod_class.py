@@ -134,7 +134,7 @@ class Automod:
             header = {
                 "Authorization": anti_phish_token,
                 "Content-Type": "application/json",
-                "User-Agent": "CandyInc",
+                "User-Agent": "Azrael Header", # replace with header given b the api
             }
             data = json.dumps({"data": self.message.content})
 
