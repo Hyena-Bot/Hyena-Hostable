@@ -44,6 +44,9 @@ load_dotenv()
 
 
 class Bot(commands.Bot):
+    """
+    Base subclass of  commands.Bot, with custom methods added.
+    """
     def __init__(self, *args, **kwargs):
         self.config = self._load_config()
         super().__init__(
@@ -61,10 +64,11 @@ class Bot(commands.Bot):
         self.help_command = None
         self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN"]}
         self.get_commands = self._get_total_commands
+        self.version = "1.0.ea"
         self.colors = []
         self._cogs = [
             f"cogs.{cog[:-3]}"
-            for cog in os.listdir("cogs")
+            for cog in os.listdir("src/cogs")
             if cog.endswith(".py")
             and not cog.startswith("_")
             and not (cog in self.config["bot_config"]["cogs_not_to_load"])
@@ -116,7 +120,7 @@ class Bot(commands.Bot):
         return self.config["bot_config"]["bot_config"]
 
     def _load_config(self):
-        with open("../config.yml", "r") as f:
+        with open("./config.yml", "r") as f:
             try:
                 config = yaml.safe_load(f)
             except yaml.YAMLError as exc:
