@@ -1,12 +1,16 @@
 import random
-from discord import Embed, Color
+
+from discord import Color, Embed
+
 from hyena import Bot
 
 
-def success_embed(bot: Bot, *, title: str = None, desc: str = None, pfp_url: str = None, color = None) -> Embed:
+def success_embed(
+    bot: Bot, *, title: str = None, desc: str = None, pfp_url: str = None, color=None
+) -> Embed:
     """
     Creates an success embed for when actions are done properly .\n
-    
+
     Accepts the following args and kwargs:
         `bot`: commands.Bot - the bot object. (arg)
         `title`: str - the title of embed.
@@ -20,15 +24,14 @@ def success_embed(bot: Bot, *, title: str = None, desc: str = None, pfp_url: str
         if not color:
             color = Color.green()
 
-        embed = Embed(color = color)
+        embed = Embed(color=color)
 
         if title:
             embed.title = f"{bot.success_emoji} {title}"
         if desc:
             embed.description = desc
-        
-        if pfp_url:
-            embed.set_thumbnail(url = pfp_url)
-        
-        return embed
 
+        if pfp_url:
+            embed.set_thumbnail(url=pfp_url)
+
+        return embed

@@ -35,6 +35,7 @@ import os
 import random
 import traceback
 
+import aiohttp
 import discord
 import yaml
 from discord.ext import commands, tasks
@@ -47,6 +48,7 @@ class Bot(commands.Bot):
     """
     Base subclass of  commands.Bot, with custom methods added.
     """
+
     def __init__(self, *args, **kwargs):
         self.config = self._load_config()
         super().__init__(
@@ -64,7 +66,7 @@ class Bot(commands.Bot):
         self.help_command = None
         self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN"]}
         self.get_commands = self._get_total_commands
-        self.version = "1.0.ea"
+        self.version = "1.0a"
         self.colors = []
         self._cogs = [
             f"cogs.{cog[:-3]}"
@@ -74,6 +76,7 @@ class Bot(commands.Bot):
             and not (cog in self.config["bot_config"]["cogs_not_to_load"])
         ]
         self.success_emoji = self.config["bot_config"]["success_emoji"]
+        self.failure_emoji = self.config["bot_config"]["failure_emoji"]
         self.logger = self._configure_logging()
 
         from utils import checks, tools
@@ -82,6 +85,7 @@ class Bot(commands.Bot):
         self.checks = checks
 
     async def setup_hook(self):
+        self.session = aiohttp.ClientSession()
         try:
             for cog in self._cogs:
                 try:
@@ -93,7 +97,13 @@ class Bot(commands.Bot):
         except Exception as e:
             raise e
 
-        # self.console = await self.fetch_channel(self.config["bot_config"]["errors_channel"])
+        self.console = await self.fetch_channel(
+            self.config["bot_config"]["errors_channel"]
+        )
+
+    async def close(self):
+        await self.session.close()
+        await super().close()
 
     def run(self):
         super().run(self.secrets["TOKEN"])
@@ -107,7 +117,6 @@ class Bot(commands.Bot):
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
-        console = self.get_channel(self.config["bot_config"]["errors_channel"])
         embeds = self.tools.error_to_embed()
         context_embed = discord.Embed(
             title="Context",

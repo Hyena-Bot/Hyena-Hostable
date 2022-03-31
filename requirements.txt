@@ -2,4 +2,5 @@ git+https://github.com/Rapptz/discord.py@master#egg=discord.py[voice]
 PyYAML==6.0
 python-dotenv==0.19.0
 aiosqlite==0.17.0
-aiohttp==3.8.1
+aiohttp==3.8.
+better_profanity==0.7.0
