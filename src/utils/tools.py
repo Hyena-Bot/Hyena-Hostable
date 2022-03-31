@@ -36,8 +36,8 @@ def convert_time(arg):
     if not time_data:
         raise commands.BadArgument(
             "The time provided is not valid, use proper times with their corresponding units `[s|m|h|d|w]`.\
-            \nex. `/timeout @Donut 10 days 5 seconds`\
-            \n      `/timeout @Donut 1w`"
+            \nex. `/timeout add @Donut 10 days 5 seconds`\
+            \n      `/timeout add @Donut 1w`"
         )
 
     return res
@@ -63,3 +63,15 @@ def error_to_embed(error: Exception = None):
         )
         for text in traceback_texts
     ]
+
+
+def _get_guild_icon(interaction: discord.Interaction):
+    if not interaction.guild.icon:
+        return "https://i.ibb.co/KjDkLQ8/image.png"
+    return interaction.guild.icon.with_format("png").url
+
+
+def _get_mem_avatar(user):
+    if not user.avatar:
+        return "https://i.ibb.co/KjDkLQ8/image.png"
+    return user.avatar.with_format("png").url
