@@ -25,8 +25,8 @@ bot_config:
         - "0xFFFDFC"
     success_emoji: "<:ttt:932956998742462475>" # any success/verified emoji in your server that looks good
     # here's a good one-
-    # <:success:905905851489988718>
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
+    
     failure_emoji: ":x:" # default x mark emoji
 
 automod_config:
@@ -51,4 +51,3 @@ automod_config:
     
     ignored_channels:
         - null # add the channel ids, where automod will be ignored.
-
