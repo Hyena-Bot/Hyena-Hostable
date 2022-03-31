@@ -26,3 +26,28 @@ bot_config:
     success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good
     # here's a good one-
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
+    
+    failure_emoji: ":x:" # default x mark emoji
+
+automod_config:
+    spam: true
+    spam_messages_back_to_back: 5 # Threshold cap
+    spam_message_word_limit: 500 # Words/message
+
+    badwords: true
+    custom_badwords:
+        - null # replace null with the badword needed.
+
+    caps: true
+    caps_threshold: 80 
+
+    invites: true
+
+    phish: true
+
+    warn_message: "Please refrain from sending rule breaking messages $mention."
+    embed_warn_message: true
+    delete_message_after: 5
+    
+    ignored_channels:
+        - null # add the channel ids, where automod will be ignored.
