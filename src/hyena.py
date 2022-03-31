@@ -34,6 +34,7 @@ import logging
 import os
 import random
 import traceback
+from random import choice
 
 import discord
 import yaml
@@ -71,6 +72,9 @@ class Bot(commands.Bot):
         ]
         self.success_emoji = self.config["bot_config"]["success_emoji"]
         self.logger = self._configure_logging()
+        self._gen_colors = lambda: choice(
+            [int(x, 16) for x in self.config["bot_config"]["colors"]]
+        )
 
         from utils import checks, tools
 
