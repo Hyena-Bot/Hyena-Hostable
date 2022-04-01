@@ -102,6 +102,29 @@ class Moderation(commands.Cog):
             await interaction.response.send_message(
                 f"🔨 Banned `{member}` \n**Reason:** {reason}"
             )
+
+            # Action logs
+            await self.bot._action_logger._send_embed(
+                moderator=interaction.user,
+                member=member,
+                description=(
+                    f"**Action:** \nBan\n"
+                    f"**User:** \n`{member}`\n"
+                    f"**Moderator:** \n`{interaction.user}`\n"
+                    f"**Reason:** \n{reason}\n"
+                ),
+                timestamp=interaction.created_at,
+            )
+            await self.bot._action_logger._log_action(
+                {
+                    "user_id": member.id,
+                    "data": {
+                        "action": "Ban",
+                        "reason": reason,
+                        "moderator": interaction.user.id,
+                    },
+                }
+            )
         else:
             if member == interaction.user:
                 return await interaction.response.send_message(
@@ -180,6 +203,29 @@ class Moderation(commands.Cog):
             await interaction.response.send_message(
                 f"🔨 Softbanned `{member}` \n**Reason:** {reason}"
             )
+
+            # Action logs
+            await self.bot._action_logger._send_embed(
+                moderator=interaction.user,
+                member=member,
+                description=(
+                    f"**Action:** \nSoftban\n"
+                    f"**User:** \n`{member}`\n"
+                    f"**Moderator:** \n`{interaction.user}`\n"
+                    f"**Reason:** \n{reason}\n"
+                ),
+                timestamp=interaction.created_at,
+            )
+            await self.bot._action_logger._log_action(
+                {
+                    "user_id": member.id,
+                    "data": {
+                        "action": "Softban",
+                        "reason": reason,
+                        "moderator": interaction.user.id,
+                    },
+                }
+            )
         else:
             if member == interaction.user:
                 return await interaction.response.send_message(
@@ -240,6 +286,29 @@ class Moderation(commands.Cog):
             )
             await interaction.response.send_message(
                 f"🦿 Kicked `{member}` \n**Reason:** {reason}"
+            )
+
+            # Action logs
+            await self.bot._action_logger._send_embed(
+                moderator=interaction.user,
+                member=member,
+                description=(
+                    f"**Action:** \Kick\n"
+                    f"**User:** \n`{member}`\n"
+                    f"**Moderator:** \n`{interaction.user}`\n"
+                    f"**Reason:** \n{reason}\n"
+                ),
+                timestamp=interaction.created_at,
+            )
+            await self.bot._action_logger._log_action(
+                {
+                    "user_id": member.id,
+                    "data": {
+                        "action": "Kick",
+                        "reason": reason,
+                        "moderator": interaction.user.id,
+                    },
+                }
             )
         else:
             if member == interaction.user:
@@ -308,8 +377,28 @@ class Moderation(commands.Cog):
                     unbanned_user = ban_entry.user
 
         if success:
-            # ... modlogs and others to be added later
-            pass
+            # Action logs
+            await self.bot._action_logger._send_embed(
+                moderator=interaction.user,
+                member=member,
+                description=(
+                    f"**Action:** \Revoke ban\n"
+                    f"**User:** \n`{member}`\n"
+                    f"**Moderator:** \n`{interaction.user}`\n"
+                    f"**Reason:** \n{reason}\n"
+                ),
+                timestamp=interaction.created_at,
+            )
+            await self.bot._action_logger._log_action(
+                {
+                    "user_id": member.id,
+                    "data": {
+                        "action": "Revoke ban",
+                        "reason": reason,
+                        "moderator": interaction.user.id,
+                    },
+                }
+            )
         if not success:
             await interaction.response.send_message(
                 f"Cannot Find `{member}`, \nNOTE: You can send both IDs and their proper names whichever you like the most :)"
@@ -487,7 +576,17 @@ class Moderation(commands.Cog):
                 "I dont seem to have the permissions to do this action!"
             )
 
-        # modlogs ...
+        # Action logs
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=channel,
+            description=(
+                f"**Action:** \nLock\n"
+                f"**Channel:** \n`#{channel.name}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+            ),
+            timestamp=interaction.created_at,
+        )
 
     @app_commands.command(
         name="unlock",
@@ -523,6 +622,17 @@ class Moderation(commands.Cog):
             return await interaction.response.send_message(
                 "I dont seem to have the permissions to do this action!"
             )
+
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=channel,
+            description=(
+                f"**Action:** \nUnlock\n"
+                f"**Channel:** \n`#{channel.name}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+            ),
+            timestamp=interaction.created_at,
+        )
 
 
 async def setup(bot):

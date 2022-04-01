@@ -65,13 +65,16 @@ def error_to_embed(error: Exception = None):
     ]
 
 
+GRAYSCALE_NOICON_REVERT = "https://i.ibb.co/KjDkLQ8/image.png"
+
+
 def _get_guild_icon(interaction: discord.Interaction):
     if not interaction.guild.icon:
-        return "https://i.ibb.co/KjDkLQ8/image.png"
+        return GRAYSCALE_NOICON_REVERT
     return interaction.guild.icon.with_format("png").url
 
 
 def _get_mem_avatar(user):
     if not user.avatar:
-        return "https://i.ibb.co/KjDkLQ8/image.png"
+        return GRAYSCALE_NOICON_REVERT
     return user.avatar.with_format("png").url
