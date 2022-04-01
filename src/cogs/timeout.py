@@ -31,6 +31,7 @@ Kindly check out ../LICENSE
 """
 
 import datetime
+from random import choice
 from typing import Optional
 
 import discord
@@ -42,15 +43,19 @@ class Timeout(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="timeout",
+    timeout = app_commands.Group(
+        name="timeout", description="Controls for timing out a user"
+    )
+
+    @timeout.command(
+        name="add",
         description="Timeout (Mute) a user so they cannot add reactions/speak/join voice channels.",
     )
     @app_commands.checks.cooldown(1, 3)
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.describe(
         member="The member to timeout/mute",
-        time="how long to timeout the member [Max - 28 days] ex. /timeout <user> 10 days 5 seconds",
+        time="how long to timeout the member [Max - 28 days] ex. /timeout add <user> 10 days 5 seconds",
         reason="The reason to timeout/mute the member",
     )
     async def _timeout(
@@ -71,7 +76,7 @@ class Timeout(commands.Cog):
 
         **Syntax:**
         ```
-        /timeout <member> <time> [reason]
+        /timeout add <member> <time> [reason]
         ```
         """
         if interaction.user.top_role <= member.top_role:
@@ -103,9 +108,32 @@ class Timeout(commands.Cog):
         except:
             pass
 
-    @app_commands.command(
-        name="timeout-end", description="End timeout (Mute) of a user."
-    )
+        # Action logs
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=member,
+            description=(
+                f"**Action:** \nTimeout\n"
+                f"**User:** \n`{member}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+                f"**Reason:** \n{reason}\n"
+                f"**length:** \n{delta}\n"
+            ),
+            timestamp=interaction.created_at,
+        )
+        await self.bot._action_logger._log_action(
+            {
+                "user_id": member.id,
+                "data": {
+                    "action": "Timeout",
+                    "reason": reason,
+                    "moderator": interaction.user.id,
+                    "delta": str(delta),
+                },
+            }
+        )
+
+    @timeout.command(name="remove", description="End timeout (Mute) of a user.")
     @app_commands.checks.cooldown(1, 3)
     @app_commands.checks.has_permissions(moderate_members=True)
     @app_commands.describe(
@@ -128,7 +156,7 @@ class Timeout(commands.Cog):
 
         **Syntax:**
         ```
-        /timeout-end <member> [reason]
+        /timeout remove <member> [reason]
         ```
         """
 
@@ -158,6 +186,72 @@ class Timeout(commands.Cog):
             )
         except:
             pass
+
+        # Action logs
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=member,
+            description=(
+                f"**Action:** \nTimeout remove\n"
+                f"**User:** \n`{member}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+                f"**Reason:** \n{reason}\n"
+            ),
+            timestamp=interaction.created_at,
+        )
+        await self.bot._action_logger._log_action(
+            {
+                "user_id": member.id,
+                "data": {
+                    "action": "Timeout remove",
+                    "reason": reason,
+                    "moderator": interaction.user.id,
+                },
+            }
+        )
+
+    @timeout.command(name="view", description="View all timed out users for the server")
+    @app_commands.checks.cooldown(1, 3)
+    @app_commands.checks.has_permissions(moderate_members=True)
+    async def _view(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        View all timed out users for the server
+
+        **Args:**
+        • none
+
+        **Syntax:**
+        ```
+        /timeout view
+        ```
+        """
+
+        desc = []
+        for user in interaction.guild.members:
+            if user.is_timed_out():
+                desc.append(
+                    f"`{user}` : timed out until - `{user.timed_out_until.strftime('%d %b, %H:%M:%S')}`"
+                )
+
+        if not desc:
+            return await interaction.response.send_message(
+                "> There are no timed out members in the server!"
+            )
+
+        embed = discord.Embed(
+            color=self.bot._gen_colors(), timestamp=interaction.created_at
+        )
+        embed.set_author(
+            name="Timed out users", icon_url=self.bot.tools._get_guild_icon(interaction)
+        )
+        embed.description = "\n".join(desc)
+        embed.set_footer(
+            text=f"Requested by {interaction.user}",
+            icon_url=self.bot.tools._get_mem_avatar(interaction.user),
+        )
+
+        await interaction.response.send_message(content="Here you go!", embed=embed)
 
 
 async def setup(bot):

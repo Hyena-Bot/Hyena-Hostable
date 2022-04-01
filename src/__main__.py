@@ -36,6 +36,7 @@ import typing
 
 import discord
 from discord import app_commands
+from discord.ext.commands import BadArgument
 
 from hyena import Bot
 
@@ -50,6 +51,8 @@ async def app_command_error(
     ],
     error: discord.app_commands.AppCommandError,
 ):
+    error = getattr(error, "original", error)
+
     # if isinstance(error, bot.checks.CheckFailed):
     #     await interaction.response.send_message(str(error))
 
@@ -61,8 +64,8 @@ async def app_command_error(
     elif isinstance(error, app_commands.errors.CommandOnCooldown):
         await interaction.response.send_message("> " + str(error))
 
-    elif isinstance(error, app_commands.errors.CommandInvokeError):
-        await interaction.response.send_message("> " + str(error.original))
+    elif isinstance(error, BadArgument):
+        await interaction.response.send_message("> " + str(error))
 
     else:
         bot.logger.error(str(error))
