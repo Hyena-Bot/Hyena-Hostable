@@ -5,4 +5,4 @@ __pycache__
 .env
 discord.py
 bot_logs.log
-src/data/*.sqlite
+*.sqlite
