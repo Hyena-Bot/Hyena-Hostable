@@ -108,6 +108,31 @@ class Timeout(commands.Cog):
         except:
             pass
 
+        # Action logs
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=member,
+            description=(
+                f"**Action:** \nTimeout\n"
+                f"**User:** \n`{member}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+                f"**Reason:** \n{reason}\n"
+                f"**length:** \n{delta}\n"
+            ),
+            timestamp=interaction.created_at,
+        )
+        await self.bot._action_logger._log_action(
+            {
+                "user_id": member.id,
+                "data": {
+                    "action": "Timeout",
+                    "reason": reason,
+                    "moderator": interaction.user.id,
+                    "delta": str(delta),
+                },
+            }
+        )
+
     @timeout.command(name="remove", description="End timeout (Mute) of a user.")
     @app_commands.checks.cooldown(1, 3)
     @app_commands.checks.has_permissions(moderate_members=True)
@@ -161,6 +186,29 @@ class Timeout(commands.Cog):
             )
         except:
             pass
+
+        # Action logs
+        await self.bot._action_logger._send_embed(
+            moderator=interaction.user,
+            member=member,
+            description=(
+                f"**Action:** \nTimeout remove\n"
+                f"**User:** \n`{member}`\n"
+                f"**Moderator:** \n`{interaction.user}`\n"
+                f"**Reason:** \n{reason}\n"
+            ),
+            timestamp=interaction.created_at,
+        )
+        await self.bot._action_logger._log_action(
+            {
+                "user_id": member.id,
+                "data": {
+                    "action": "Timeout remove",
+                    "reason": reason,
+                    "moderator": interaction.user.id,
+                },
+            }
+        )
 
     @timeout.command(name="view", description="View all timed out users for the server")
     @app_commands.checks.cooldown(1, 3)
