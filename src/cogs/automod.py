@@ -87,7 +87,7 @@ class Automoderation(commands.Cog):
 
         message = after
 
-        if message.author.id == self.bot.user.id:
+        if before.author.id == self.bot.user.id:
             return
 
         automod = Automod(self.bot, message)
