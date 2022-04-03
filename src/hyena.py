@@ -37,6 +37,7 @@ import traceback
 from random import choice
 
 import aiosqlite
+import aiohttp
 import discord
 import yaml
 from discord.ext import commands, tasks
@@ -48,6 +49,10 @@ load_dotenv()
 
 
 class Bot(commands.Bot):
+    """
+    Base subclass of  commands.Bot, with custom methods added.
+    """
+
     def __init__(self, *args, **kwargs):
         self.config = self._load_config()
         super().__init__(
@@ -65,15 +70,17 @@ class Bot(commands.Bot):
         self.help_command = None
         self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN"]}
         self.get_commands = self._get_total_commands
+        self.version = "1.0a"
         self.colors = []
         self._cogs = [
             f"cogs.{cog[:-3]}"
-            for cog in os.listdir("cogs")
+            for cog in os.listdir("src/cogs")
             if cog.endswith(".py")
             and not cog.startswith("_")
             and not (cog in self.config["bot_config"]["cogs_not_to_load"])
         ]
         self.success_emoji = self.config["bot_config"]["success_emoji"]
+        self.failure_emoji = self.config["bot_config"]["failure_emoji"]
         self.logger = self._configure_logging()
         self._gen_colors = lambda: choice(
             [int(x, 16) for x in self.config["bot_config"]["colors"]]
@@ -90,6 +97,7 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self._connect_databases()
+        self.session = aiohttp.ClientSession()
 
         try:
             for cog in self._cogs:
@@ -106,6 +114,14 @@ class Bot(commands.Bot):
     async def _connect_databases(self):
         self._action_logs_db = await aiosqlite.connect("./data/action-logs.sqlite")
 
+        self.console = await self.fetch_channel(
+            self.config["bot_config"]["errors_channel"]
+        )
+
+    async def close(self):
+        await self.session.close()
+        await super().close()
+
     def run(self):
         super().run(self.secrets["TOKEN"])
 
@@ -118,7 +134,6 @@ class Bot(commands.Bot):
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
-        console = self.get_channel(self.config["bot_config"]["errors_channel"])
         embeds = self.tools.error_to_embed()
         context_embed = discord.Embed(
             title="Context",
@@ -131,7 +146,7 @@ class Bot(commands.Bot):
         return self.config["bot_config"]["bot_config"]
 
     def _load_config(self):
-        with open("../config.yml", "r") as f:
+        with open("./config.yml", "r") as f:
             try:
                 config = yaml.safe_load(f)
             except yaml.YAMLError as exc:

@@ -6,3 +6,5 @@ __pycache__
 discord.py
 bot_logs.log
 *.sqlite
+eval_command.py
+
