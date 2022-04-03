@@ -14,7 +14,10 @@ bot_config:
     #     - "file_name_of_cog.py"
     #     - "file_name_of_cog2.py" 
     # etc.....
+    mod_action_logs_channel: 814895166141628426 # the channel to get moderation action logs errors eg. ban/kick etc.
+    errors_channel: 814895166141628426 # the secret channel to get bot errors
     errors_channel: 932723576409301086 #814895166141628426 # the secret channel to get bot errors
+
     statuses: # statuses you want to be displayed in your bot
         - with the ban hammer!
         - hey I'm the new and improved hostable hyena!

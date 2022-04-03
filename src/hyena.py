@@ -36,11 +36,14 @@ import random
 import traceback
 from random import choice
 
+import aiosqlite
 import aiohttp
 import discord
 import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+
+from utils import action_logger, checks, tools
 
 load_dotenv()
 
@@ -53,7 +56,7 @@ class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
         self.config = self._load_config()
         super().__init__(
-            command_prefix=self.config["bot_config"]["bot_prefix"],
+            command_prefix=self._bot_command_prefix,
             owner_ids=self.config["bot_config"]["owners_id"],
             intents=discord.Intents.all(),
             allowed_mentions=discord.AllowedMentions(
@@ -83,13 +86,19 @@ class Bot(commands.Bot):
             [int(x, 16) for x in self.config["bot_config"]["colors"]]
         )
 
-        from utils import checks, tools
-
         self.tools = tools
         self.checks = checks
+        self._action_logs_db = None
+        self._action_logger = None
+
+    def _bot_command_prefix(self, bot, _):
+        base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
+        return [self.config["bot_config"]["bot_prefix"], *base]
 
     async def setup_hook(self):
+        await self._connect_databases()
         self.session = aiohttp.ClientSession()
+
         try:
             for cog in self._cogs:
                 try:
@@ -100,6 +109,10 @@ class Bot(commands.Bot):
                     raise e
         except Exception as e:
             raise e
+        self._action_logger = action_logger.ModLogs(self)
+
+    async def _connect_databases(self):
+        self._action_logs_db = await aiosqlite.connect("./data/action-logs.sqlite")
 
         self.console = await self.fetch_channel(
             self.config["bot_config"]["errors_channel"]
@@ -154,6 +167,9 @@ class Bot(commands.Bot):
     def get_cog_aliases(self, term: str):
         aliases = {
             ("moderation", "mod"): "moderation",
+            ("handlers", "core", "core-handlers"): "core-handler",
+            ("timeout", "mute", "to"): "timeout",
+            ("action-logs", "actions", "alogs"): "action-logs",
         }
 
         for alias, cog in aliases.items():

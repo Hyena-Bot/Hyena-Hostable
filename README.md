@@ -51,11 +51,15 @@ $ source ./venv/bin/activate  # Linux/mac # from root dir
 
 $ venv\Scripts\activate.bat # Windows
 ```
-Now our virtual env should be acitvated, time to install the packages.
+Now our virtual env should be acitvated, time to install the packages & databases.
 ```sh
-(venv) pip install -U -r requirements.txt  # Linux/mac
+$ pip install -U -r requirements.txt  # Linux/mac
 
-(venv) py -m pip install -U -r requirements.txt # Windows
+$ py -m pip install -U -r requirements.txt # Windows
+
+# now creating databases
+$ cd src/data
+$ python3 create-databases.py
 ```
 
 Step 4: Checkout a new branch

@@ -5,4 +5,6 @@ __pycache__
 .env
 discord.py
 bot_logs.log
+*.sqlite
 eval_command.py
+
