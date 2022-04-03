@@ -81,6 +81,7 @@ class Bot(commands.Bot):
 
         self.tools = tools
         self.checks = checks
+        self._action_logs_db = None
         self._action_logger = None
 
     def _bot_command_prefix(self, bot, _):
@@ -88,6 +89,8 @@ class Bot(commands.Bot):
         return [self.config["bot_config"]["bot_prefix"], *base]
 
     async def setup_hook(self):
+        await self._connect_databases()
+
         try:
             for cog in self._cogs:
                 try:
@@ -98,8 +101,6 @@ class Bot(commands.Bot):
                     raise e
         except Exception as e:
             raise e
-
-        await self._connect_databases()
         self._action_logger = action_logger.ModLogs(self)
 
     async def _connect_databases(self):
@@ -151,6 +152,9 @@ class Bot(commands.Bot):
     def get_cog_aliases(self, term: str):
         aliases = {
             ("moderation", "mod"): "moderation",
+            ("handlers", "core", "core-handlers"): "core-handler",
+            ("timeout", "mute", "to"): "timeout",
+            ("action-logs", "actions", "alogs"): "action-logs",
         }
 
         for alias, cog in aliases.items():
