@@ -41,7 +41,7 @@ This can simply be done by doing the following:
 ```sh
 $ virtualenv venv # Linux/mac
 
-$ py -m venv venv # windows
+$ py -m venv venv # Windows
 ```
 
 Step 3: Activating virtual environment and setting up the dependencies
@@ -60,6 +60,7 @@ $ py -m pip install -U -r requirements.txt # Windows
 # now creating databases
 $ cd src/data
 $ python3 create-databases.py # Linux/mac
+
 $ py create-databases.py # Windows
 ```
 
