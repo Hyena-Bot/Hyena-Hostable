@@ -122,6 +122,7 @@ class Moderation(commands.Cog):
                         "action": "Ban",
                         "reason": reason,
                         "moderator": interaction.user.id,
+                        "at": discord.utils.utcnow().timestamp(),
                     },
                 }
             )
@@ -223,6 +224,7 @@ class Moderation(commands.Cog):
                         "action": "Softban",
                         "reason": reason,
                         "moderator": interaction.user.id,
+                        "at": discord.utils.utcnow().timestamp(),
                     },
                 }
             )
@@ -293,7 +295,7 @@ class Moderation(commands.Cog):
                 moderator=interaction.user,
                 member=member,
                 description=(
-                    f"**Action:** \Kick\n"
+                    f"**Action:** \nKick\n"
                     f"**User:** \n`{member}`\n"
                     f"**Moderator:** \n`{interaction.user}`\n"
                     f"**Reason:** \n{reason}\n"
@@ -307,6 +309,7 @@ class Moderation(commands.Cog):
                         "action": "Kick",
                         "reason": reason,
                         "moderator": interaction.user.id,
+                        "at": discord.utils.utcnow().timestamp(),
                     },
                 }
             )
@@ -396,6 +399,7 @@ class Moderation(commands.Cog):
                         "action": "Revoke ban",
                         "reason": reason,
                         "moderator": interaction.user.id,
+                        "at": discord.utils.utcnow().timestamp(),
                     },
                 }
             )
