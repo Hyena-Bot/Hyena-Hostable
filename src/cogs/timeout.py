@@ -129,6 +129,7 @@ class Timeout(commands.Cog):
                     "reason": reason,
                     "moderator": interaction.user.id,
                     "delta": str(delta),
+                    "at": discord.utils.utcnow().timestamp(),
                 },
             }
         )
@@ -206,6 +207,7 @@ class Timeout(commands.Cog):
                     "action": "Timeout remove",
                     "reason": reason,
                     "moderator": interaction.user.id,
+                    "at": discord.utils.utcnow().timestamp(),
                 },
             }
         )
