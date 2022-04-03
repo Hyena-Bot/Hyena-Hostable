@@ -36,8 +36,8 @@ import random
 import traceback
 from random import choice
 
-import aiosqlite
 import aiohttp
+import aiosqlite
 import discord
 import yaml
 from discord.ext import commands, tasks
