@@ -31,12 +31,11 @@ Kindly check out ../LICENSE
 """
 
 import contextlib
+import traceback
 
 import discord
 from discord import app_commands
 from discord.ext import commands
-
-import traceback
 
 
 class CoreHandlers(commands.Cog):

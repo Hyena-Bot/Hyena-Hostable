@@ -68,7 +68,9 @@ class Bot(commands.Bot):
         )
 
         self.help_command = None
-        self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN"]}
+        self.secrets = {
+            x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN"]
+        }
         self.get_commands = self._get_total_commands
         self.version = "1.0.0a"
         self.colors = []

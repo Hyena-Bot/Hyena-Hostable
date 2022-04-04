@@ -33,20 +33,19 @@ Kindly check out ../LICENSE
 import contextlib
 import traceback
 import typing
+from contextlib import redirect_stdout
+from io import StringIO
+from textwrap import indent
+from timeit import default_timer
 
 import discord
 from discord import app_commands
 from discord.ext.commands import BadArgument
 
-from io import StringIO
-from timeit import default_timer
-from textwrap import indent
-
 from hyena import Bot
 
-from contextlib import redirect_stdout
-
 bot = Bot()  # dont pass in things here, pass in ./hyena.py
+
 
 @bot.tree.error
 async def app_command_error(
@@ -174,27 +173,24 @@ async def _sync(ctx):
 
 
 def cleanup_code(content):
-    if content.startswith('```') and content.endswith('```'):
-        return '\n'.join(content.split('\n')[1:-1])
+    if content.startswith("```") and content.endswith("```"):
+        return "\n".join(content.split("\n")[1:-1])
 
-    return content.strip('` \n')
+    return content.strip("` \n")
+
 
 @bot.command(name="eval")
 async def eval_command(ctx, *, code='await ctx.send("Hello World")'):
     if ctx.author.id in bot.owner_ids:
-        embed = discord.Embed(
-            color=discord.Colour.green()
+        embed = discord.Embed(color=discord.Colour.green())
+        embed.set_author(
+            name="Evaluate code", icon_url=bot.tools._get_mem_avatar(bot.user)
         )
-        embed.set_author(name="Evaluate code", icon_url=bot.tools._get_mem_avatar(bot.user))
 
         start = default_timer()
         code = cleanup_code(code)
         code = f"async def code():\n{indent(code, '    ')}"
-        _global_vars = {
-            "bot": bot,
-            "ctx": ctx,
-            "discord": discord
-        }
+        _global_vars = {"bot": bot, "ctx": ctx, "discord": discord}
         buf = StringIO()
 
         try:
@@ -221,7 +217,10 @@ async def eval_command(ctx, *, code='await ctx.send("Hello World")'):
                     embed.description = f"```py\n{console}{resp}\n```"
         stop = default_timer()
 
-        embed.set_footer(text="Evaluated in: {:.5f} seconds".format(stop - start), icon_url=bot.tools._get_mem_avatar(ctx.author))
+        embed.set_footer(
+            text="Evaluated in: {:.5f} seconds".format(stop - start),
+            icon_url=bot.tools._get_mem_avatar(ctx.author),
+        )
         await ctx.send(embed=embed)
     else:
         await ctx.send("Sorry, this is a Developer only command!")
