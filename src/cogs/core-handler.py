@@ -31,6 +31,7 @@ Kindly check out ../LICENSE
 """
 
 import contextlib
+import traceback
 
 import discord
 from discord import app_commands
@@ -57,7 +58,7 @@ class CoreHandlers(commands.Cog):
             with contextlib.suppress(discord.NotFound, discord.Forbidden):
                 await ctx.send(embed=embed)
 
-            traceback_embeds = self.bot.tools.error_to_embed(error)
+            traceback_embeds = self.bot.tools.error_to_embed(self.bot, error)
 
             # Add message content
             info_embed = discord.Embed(

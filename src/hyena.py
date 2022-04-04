@@ -68,7 +68,9 @@ class Bot(commands.Bot):
         )
 
         self.help_command = None
-        self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN"]}
+        self.secrets = {
+            x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN"]
+        }
         self.get_commands = self._get_total_commands
         self.version = "1.0.0a"
         self.colors = []
@@ -90,7 +92,6 @@ class Bot(commands.Bot):
         self.checks = checks
         self._action_logs_db = None
         self._action_logger = None
-        self.session = aiohttp.ClientSession()
 
     def _bot_command_prefix(self, bot, _):
         base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
@@ -98,7 +99,7 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self._connect_databases()
-
+        self.session = aiohttp.ClientSession()
         try:
             for cog in self._cogs:
                 try:
@@ -134,7 +135,7 @@ class Bot(commands.Bot):
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
-        embeds = self.tools.error_to_embed()
+        embeds = self.tools.error_to_embed(bot)
         context_embed = discord.Embed(
             title="Context",
             description=f"**Event**: {event_method}",
