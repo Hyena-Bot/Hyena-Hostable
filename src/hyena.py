@@ -98,6 +98,7 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self._connect_databases()
+        self.session = aiohttp.ClientSession()
 
         try:
             for cog in self._cogs:
