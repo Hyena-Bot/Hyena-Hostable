@@ -30,7 +30,7 @@ bot_config:
     # here's a good one-
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
     
-    failure_emoji: ":x:" # default x mark emoji
+    failure_emoji: "❌" # default x mark emoji
 
 automod_config:
     spam: true
@@ -39,7 +39,7 @@ automod_config:
 
     badwords: true
     custom_badwords:
-        - null # replace null with the badword needed.
+        - null # replace null with the badword needed. Most are already provided
 
     caps: true
     caps_threshold: 80 
