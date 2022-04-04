@@ -4,9 +4,6 @@ bot_config:
     bot_prefix: "-" # your bot's prefix in quotation marks 
     owners_id: # the IDs of the owners of the bots
         - 711444754080071714
-        - 832660720495362078
-        - 918703165648539700
-        - 921020428791742515
     cogs_not_to_load: 
         - ""
     # add cogs which you dont want to use in a list for example:
@@ -16,17 +13,16 @@ bot_config:
     # etc.....
     mod_action_logs_channel: 814895166141628426 # the channel to get moderation action logs errors eg. ban/kick etc.
     errors_channel: 814895166141628426 # the secret channel to get bot errors
-    errors_channel: 932723576409301086 #814895166141628426 # the secret channel to get bot errors
 
     statuses: # statuses you want to be displayed in your bot
         - with the ban hammer!
         - hey I'm the new and improved hostable hyena!
         - https://github.com/Hyena-Bot
-    guild_id: 932723575775965254 # your server's ID
+    guild_id: 794467787690344508 # your server's ID
     colors:              # theme color of the bot (you will see them in the embeds) (in python hex format)
         - "0x3A4047"
         - "0xFFFDFC"
-    success_emoji: "<:ttt:932956998742462475>" # any success/verified emoji in your server that looks good
+    success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good
     # here's a good one-
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
     
@@ -54,3 +50,5 @@ automod_config:
     
     ignored_channels:
         - null # add the channel ids, where automod will be ignored.
+
+# CLONE this file to config.yml ( do not delete this one )

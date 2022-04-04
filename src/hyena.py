@@ -90,6 +90,7 @@ class Bot(commands.Bot):
         self.checks = checks
         self._action_logs_db = None
         self._action_logger = None
+        self.session = aiohttp.ClientSession()
 
     def _bot_command_prefix(self, bot, _):
         base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
@@ -97,7 +98,6 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self._connect_databases()
-        self.session = aiohttp.ClientSession()
 
         try:
             for cog in self._cogs:

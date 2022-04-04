@@ -69,7 +69,6 @@ async def app_command_error(
 
     else:
         bot.logger.error(str(error))
-        console = bot.get_channel(bot.config["bot_config"]["errors_channel"])
         embed = discord.Embed(
             title="Error",
             description="An unknown error has occurred and my developer has been notified of it.",
@@ -130,7 +129,7 @@ async def app_command_error(
 
         info_embed.add_field(name="User", value=value)
 
-        await console.send(embeds=[*traceback_embeds, info_embed])
+        await bot.console.send(embeds=[*traceback_embeds, info_embed])
 
 
 @bot.command(name="load")

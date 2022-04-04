@@ -49,10 +49,6 @@ class CoreHandlers(commands.Cog):
             pass
 
         else:
-            console = self.bot.get_channel(
-                self.bot.config["bot_config"]["errors_channel"]
-            )
-
             embed = discord.Embed(
                 title="Error",
                 description="An unknown error has occurred and my developer has been notified of it.",
@@ -108,7 +104,7 @@ class CoreHandlers(commands.Cog):
 
             info_embed.add_field(name="User", value=value)
 
-            await console.send(embeds=[*traceback_embeds, info_embed])
+            await self.bot.console.send(embeds=[*traceback_embeds, info_embed])
 
 
 async def setup(bot):
