@@ -166,7 +166,7 @@ async def _sync(ctx):
         return await ctx.send("You are not the developer!")
 
     await bot.tree.sync(guild=discord.Object(bot.config["bot_config"]["guild_id"]))
-    await ctx.message.add_reaction(str(bot.success_emoji))
+    await ctx.message.add_reaction(bot.success_emoji)
     print("Synced slash commands, requested by", str(ctx.author))
 
 
