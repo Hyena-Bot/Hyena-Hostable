@@ -146,7 +146,7 @@ class Bot(commands.Bot):
         return self.config["bot_config"]["bot_config"]
 
     def _load_config(self):
-        with open("./config.yml", "r") as f:
+        with open("../config.yml", "r") as f:
             try:
                 config = yaml.safe_load(f)
             except yaml.YAMLError as exc:
