@@ -4,7 +4,6 @@ import json
 import os
 import re
 
-import aiohttp
 import discord
 from better_profanity import profanity
 
@@ -14,9 +13,6 @@ from hyena import Bot
 INVITE_REGEX = re.compile(
     r"(https://www\.|https://|www\.)?(discord.gg|discord.com/invite|dis.gd/invite|dsc.io|dsc.gg|invite.gg)/[a-zA-z0-9_-]"
 )
-
-# Tokens
-anti_phish_token = os.getenv("AZRAEL_API_TOKEN")
 
 
 # Helper Functions
@@ -132,18 +128,16 @@ class Automod:
 
         else:
             header = {
-                "Authorization": anti_phish_token,
+                "Authorization": self.bot.secrets["anti_phish_token"],
                 "Content-Type": "application/json",
                 "User-Agent": "Azrael Header",
             }
             data = json.dumps({"data": self.message.content})
 
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    "https://phish.azrael.gg/check", headers=header, data=data
-                ) as r:
-                    results: dict = await r.json()
-                    await session.close()
+            async with self.bot.session.post(
+                "https://phish.azrael.gg/check", headers=header, data=data
+            ) as r:
+                results: dict = await r.json()
             if results and results.get("matched", None) is True:
                 return True
             else:

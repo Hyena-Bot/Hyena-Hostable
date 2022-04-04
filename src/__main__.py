@@ -38,10 +38,15 @@ import discord
 from discord import app_commands
 from discord.ext.commands import BadArgument
 
+from io import StringIO
+from timeit import default_timer
+from textwrap import indent
+
 from hyena import Bot
 
-bot = Bot()  # dont pass in things here, pass in ./hyena.py
+from contextlib import redirect_stdout
 
+bot = Bot()  # dont pass in things here, pass in ./hyena.py
 
 @bot.tree.error
 async def app_command_error(
@@ -68,7 +73,6 @@ async def app_command_error(
         await interaction.response.send_message("> " + str(error))
 
     else:
-        bot.logger.error(str(error))
         embed = discord.Embed(
             title="Error",
             description="An unknown error has occurred and my developer has been notified of it.",
@@ -80,7 +84,7 @@ async def app_command_error(
             except:
                 pass
 
-        traceback_embeds = bot.tools.error_to_embed(error)
+        traceback_embeds = bot.tools.error_to_embed(bot, error)
 
         info_embed = discord.Embed(
             title="Message content",
@@ -169,44 +173,56 @@ async def _sync(ctx):
     print("Synced slash commands, requested by", str(ctx.author))
 
 
+def cleanup_code(content):
+    if content.startswith('```') and content.endswith('```'):
+        return '\n'.join(content.split('\n')[1:-1])
+
+    return content.strip('` \n')
+
 @bot.command(name="eval")
 async def eval_command(ctx, *, code='await ctx.send("Hello World")'):
     if ctx.author.id in bot.owner_ids:
+        embed = discord.Embed(
+            color=discord.Colour.green()
+        )
+        embed.set_author(name="Evaluate code", icon_url=bot.tools._get_mem_avatar(bot.user))
+
+        start = default_timer()
+        code = cleanup_code(code)
+        code = f"async def code():\n{indent(code, '    ')}"
+        _global_vars = {
+            "bot": bot,
+            "ctx": ctx,
+            "discord": discord
+        }
+        buf = StringIO()
+
         try:
-            code = code.strip("`")
-            code = code.strip("py")
-            code = code.split("\n")
-
-            if len(code) > 1:
-                code_to_process = code[1:-1]
-                code = code_to_process
-
-            with open("eval_command.py", "w") as file:
-                file.writelines(
-                    """import asyncio, discord
-async def code(ctx, bot): \n"""
-                )
-
-            with open("eval_command.py", "a") as file:
-                for line in code:
-                    file.writelines("   " + line + "\n")
-
-            import importlib
-
-            import eval_command
-
-            importlib.reload(eval_command)
-            await eval_command.code(ctx, bot)
+            exec(code, _global_vars)
         except Exception as e:
-            embed = discord.Embed(
-                title="Error Occurred in eval.", color=discord.Colour.red()
-            )
-            embed.description = f"""
-```py
-{traceback.format_exc()}
-```
-"""
-            await ctx.send(embed=embed)
+            embed.description = f"```py\n{e.__class__.__name__}: {e}\n```"
+            embed.color = discord.Colour.red()
+        else:
+            func = _global_vars["code"]
+            try:
+                with redirect_stdout(buf):
+                    resp = await func()
+            except Exception as e:
+                console = buf.getvalue()
+                embed.description = f"```py\n{console}{traceback.format_exc()}\n```"
+                embed.color = discord.Colour.red()
+            else:
+                console = buf.getvalue()
+                if not resp and console:
+                    embed.description = f"```py\n{console}\n```"
+                elif not resp and not console:
+                    embed.description = "```<No output>```"
+                else:
+                    embed.description = f"```py\n{console}{resp}\n```"
+        stop = default_timer()
+
+        embed.set_footer(text="Evaluated in: {:.5f} seconds".format(stop - start), icon_url=bot.tools._get_mem_avatar(ctx.author))
+        await ctx.send(embed=embed)
     else:
         await ctx.send("Sorry, this is a Developer only command!")
 
