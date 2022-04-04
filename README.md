@@ -59,9 +59,7 @@ $ py -m pip install -U -r requirements.txt # Windows
 
 # now creating databases
 $ cd src/data
-$ python3 create-databases.py # Linux/mac
-
-$ py create-databases.py # Windows
+$ python3 create-databases.py
 ```
 
 Step 4: Checkout a new branch
