@@ -39,6 +39,7 @@ from discord.ext import commands
 
 
 class CoreHandlers(commands.Cog):
+    """Core handlers with basic events and commands"""
     def __init__(self, bot):
         self.bot = bot
 

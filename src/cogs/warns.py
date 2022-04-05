@@ -41,6 +41,7 @@ from discord.ext import commands
 
 
 class Warnings(commands.Cog):
+    """Warning systems"""
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._warns_db
@@ -48,6 +49,7 @@ class Warnings(commands.Cog):
     # helper
 
     def _gen_id(self):
+        """Generate a random warn indetifier"""
         return "".join(
             [
                 random.choice(
@@ -58,6 +60,7 @@ class Warnings(commands.Cog):
         )
 
     def _format_warning(self, guild: discord.Guild, warning: dict, serial: int) -> str:
+        """Format the given warning record"""
         moderator = guild.get_member(warning["moderator"])
         _str = (
             f"#{serial + 1}: **{warning['id']}**: - By: `{moderator}` ({moderator.id})"
@@ -82,6 +85,19 @@ class Warnings(commands.Cog):
         member: discord.Member,
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Give warning to a given user
+
+        **Args:**
+        • `<member>` - The member to warn
+        • `[reason]` - The reason for the warning
+
+        **Syntax:**
+        ```
+        /warning give <member> [reason]
+        ```
+        """
         if interaction.user.top_role < member.top_role:
             return await interaction.response.send_message(
                 "You cannot do this action due to role-hierchery."
@@ -182,6 +198,19 @@ class Warnings(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.cooldown(1, 3)
     async def _warn_remove(self, interaction, member: discord.Member, indentifier: str):
+        """
+        **Description:**
+        Remove a warning from a given user.
+
+        **Args:**
+        • `<member>` - The member to remove the warning from
+        • `<indentifier>` - The ID of the warning, use view to find it out!
+
+        **Syntax:**
+        ```
+        /warning remove <member> <indetifier>
+        ```
+        """
         if interaction.user.top_role < member.top_role:
             return await interaction.response.send_message(
                 "You cannot do this action due to role-hierchery"
@@ -254,7 +283,7 @@ class Warnings(commands.Cog):
             }
         )
 
-    @warning.command(name="view", description="View the warning of a given user.")
+    @warning.command(name="view", description="View the warnings of a given user.")
     @app_commands.describe(
         member="The member to view the warnings of", page="The page number"
     )
@@ -263,6 +292,19 @@ class Warnings(commands.Cog):
     async def _warn_view(
         self, interaction, member: discord.Member, page: Optional[int] = 1
     ):
+        """
+        **Description:**
+        View the warnings of a given user.
+
+        **Args:**
+        • `<member>` - The member to view the warnings of
+        • `[page]` - The page number
+
+        **Syntax:**
+        ```
+        /warning view <member> [page]
+        ```
+        """
         if page < 1:
             return await interaction.response.send_message(
                 "Breh, input an integer [not less than 1]."
@@ -328,6 +370,19 @@ class Warnings(commands.Cog):
         member: discord.Member,
         reason: Optional[str] = "Not provided",
     ):
+        """
+        **Description:**
+        Remove all the warnings of a given user.
+
+        **Args:**
+        • `<member>` - The member to remove the warnings of
+        • `[reason]` - The reason to remove all the warnings
+
+        **Syntax:**
+        ```
+        /warning remove-all <member> [reason]
+        ```
+        """
         if interaction.user.top_role < member.top_role:
             return await interaction.response.send_message(
                 "You cannot do this action due to role-hierchery"
