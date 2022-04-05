@@ -41,6 +41,7 @@ from discord.ext import commands
 
 class Moderation(commands.Cog):
     """Basic moderation commands"""
+
     def __init__(self, bot):
         self.bot = bot
 

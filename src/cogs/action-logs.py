@@ -40,6 +40,7 @@ from discord.ext import commands
 
 class ActionLogs(commands.Cog):
     """Moderation action logs cog"""
+
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._action_logs_db

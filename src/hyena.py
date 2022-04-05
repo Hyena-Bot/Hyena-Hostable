@@ -43,7 +43,7 @@ import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from utils import action_logger, checks, tools, automod_class
+from utils import action_logger, automod_class, checks, tools
 
 load_dotenv()
 
@@ -69,7 +69,9 @@ class Bot(commands.Bot):
 
         self.help_command = None
         self.secrets = {
-            x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN", "DEEPAI_API_KEY"]
+            x: y
+            for x, y in os.environ.items()
+            if x in ["TOKEN", "AZRAEL_API_TOKEN", "DEEPAI_API_KEY"]
         }
         self.get_commands = self._get_total_commands
         self.version = "1.0.0a"

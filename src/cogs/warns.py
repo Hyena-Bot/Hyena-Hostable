@@ -42,6 +42,7 @@ from discord.ext import commands
 
 class Warnings(commands.Cog):
     """Warning systems"""
+
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._warns_db

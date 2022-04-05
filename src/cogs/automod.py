@@ -34,8 +34,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+
 class Automoderation(commands.Cog):
     """Automoderation commands & handlers"""
+
     def __init__(self, bot):
         self.bot = bot
         self.caps_limit = self.bot.config["automod_config"]["caps_threshold"]
@@ -101,31 +103,33 @@ class Automoderation(commands.Cog):
         """The main automod handler"""
         automod = self.bot.AutomodHandler(self.bot, message)
         member = message.guild.get_member(message.author.id)
-        
+
         if (
-            not message.guild or
-            message.author.id == self.bot.user.id or
-            automod.is_author_mod() or
-            automod.is_ignored_channel()
+            not message.guild
+            or message.author.id == self.bot.user.id
+            or automod.is_author_mod()
+            or automod.is_ignored_channel()
         ):
             return
-    
+
         if await automod.is_badwords():
             await message.channel.send(
-                f"{member.mention}, that word is blacklisted.", delete_after=self.delete_after
+                f"{member.mention}, that word is blacklisted.",
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 
         elif await automod.is_caps():
             await message.channel.send(
                 f"{member.mention}, you exceeded the capitals limit : `{self.caps_limit}`% of your message length",
-                delete_after=self.delete_after
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 
         elif await automod.is_invite():
             await message.channel.send(
-                f"{member.mention}, do not send invite links.", delete_after=self.delete_after
+                f"{member.mention}, do not send invite links.",
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 
@@ -137,21 +141,22 @@ class Automoderation(commands.Cog):
 
         elif await automod.is_phish_url():
             await message.channel.send(
-                f"{member.mention}, you really think you can phish people?", delete_after=self.delete_after
+                f"{member.mention}, you really think you can phish people?",
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 
         elif await automod.is_nsfw():
             await message.channel.send(
                 f"{member.mention}, bruv you are not allowed to send NSFW content here.",
-                delete_after=self.delete_after
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 
         elif await automod.excess_mentions():
             await message.channel.send(
                 f"{member.mention}, too many mentions in a message. Maximum allowed: {self.mention_limit}",
-                delete_after=self.delete_after
+                delete_after=self.delete_after,
             )
             await automod.take_action()
 

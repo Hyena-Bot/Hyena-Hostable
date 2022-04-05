@@ -13,12 +13,15 @@ INVITE_REGEX = re.compile(
 )
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 
+
 def default_filters():
     with open("./data/filtered-words.json") as f:
         return json.load(f)
 
+
 class Automod:
     """Automod base class with all the required methods & functionality"""
+
     def __init__(self, bot, message: discord.Message):
         self.bot = bot
         self.message = message
@@ -47,7 +50,11 @@ class Automod:
         if not self.is_enabled("badwords"):
             return False
         else:
-            custom_badwords = [x for x in self.bot.config["automod_config"]["custom_badwords"] if not x in [None, "", " "]]
+            custom_badwords = [
+                x
+                for x in self.bot.config["automod_config"]["custom_badwords"]
+                if not x in [None, "", " "]
+            ]
             if not custom_badwords:
                 custom_badwords = self.default_filters
             try:
@@ -153,10 +160,7 @@ class Automod:
 
     async def is_nsfw(self) -> bool:
         """Checks for nsfw attachments in message"""
-        if (
-            not self.is_enabled("nsfw")
-            or self.message.channel.is_nsfw()
-        ):
+        if not self.is_enabled("nsfw") or self.message.channel.is_nsfw():
             return False
 
         regex_result = re.findall(URL_REGEX, self.message.content)
@@ -228,8 +232,15 @@ class Automod:
             return self.message.channel.id in ignored_channels
 
     def is_enabled(self, _filter: str):
-        """"Returns true or false considering if the given handler is enabled in the config"""
-        if _filter.lower() not in ["badwords", "spam", "invites", "phish", "nsfw", "mention"]:
+        """ "Returns true or false considering if the given handler is enabled in the config"""
+        if _filter.lower() not in [
+            "badwords",
+            "spam",
+            "invites",
+            "phish",
+            "nsfw",
+            "mention",
+        ]:
             return (None, "Invalid option supplied.")
         try:
             selected_filter = self.bot.config["automod_config"][_filter]
