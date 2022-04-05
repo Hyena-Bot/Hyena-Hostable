@@ -100,6 +100,10 @@ class Bot(commands.Bot):
     async def setup_hook(self):
         await self._connect_databases()
         self.session = aiohttp.ClientSession()
+        self.console = await self.fetch_channel(
+            self.config["bot_config"]["errors_channel"]
+        )
+
         try:
             for cog in self._cogs:
                 try:
@@ -114,10 +118,7 @@ class Bot(commands.Bot):
 
     async def _connect_databases(self):
         self._action_logs_db = await aiosqlite.connect("./data/action-logs.sqlite")
-
-        self.console = await self.fetch_channel(
-            self.config["bot_config"]["errors_channel"]
-        )
+        self._warns_db = await aiosqlite.connect("./data/warns.sqlite")
 
     async def close(self):
         await self.session.close()
@@ -171,6 +172,7 @@ class Bot(commands.Bot):
             ("handlers", "core", "core-handlers"): "core-handler",
             ("timeout", "mute", "to"): "timeout",
             ("action-logs", "actions", "alogs"): "action-logs",
+            ("warns", "warn", "warnings"): "warns",
         }
 
         for alias, cog in aliases.items():
