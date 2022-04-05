@@ -8,6 +8,13 @@ QUERIES = {
         PRIMARY KEY("user_id")
     );
     """,
+    "warns": """
+    CREATE TABLE "warns" (
+        "user_id"	INTEGER,
+        "warn_data"	TEXT,
+        PRIMARY KEY("user_id")
+    );
+    """,
 }
 
 for x, y in QUERIES.items():
@@ -16,8 +23,10 @@ for x, y in QUERIES.items():
     try:
         cursor.execute(y)
     except sqlite3.OperationalError as exc:
-        print(exc)
+        print("ignoring", exc)
         continue
     db.commit()
     cursor.close()
     db.close()
+
+print("All databases created successfully!")

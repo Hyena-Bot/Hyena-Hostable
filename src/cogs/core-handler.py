@@ -31,6 +31,7 @@ Kindly check out ../LICENSE
 """
 
 import contextlib
+import traceback
 
 import discord
 from discord import app_commands
@@ -49,10 +50,6 @@ class CoreHandlers(commands.Cog):
             pass
 
         else:
-            console = self.bot.get_channel(
-                self.bot.config["bot_config"]["errors_channel"]
-            )
-
             embed = discord.Embed(
                 title="Error",
                 description="An unknown error has occurred and my developer has been notified of it.",
@@ -61,7 +58,7 @@ class CoreHandlers(commands.Cog):
             with contextlib.suppress(discord.NotFound, discord.Forbidden):
                 await ctx.send(embed=embed)
 
-            traceback_embeds = self.bot.tools.error_to_embed(error)
+            traceback_embeds = self.bot.tools.error_to_embed(self.bot, error)
 
             # Add message content
             info_embed = discord.Embed(
@@ -108,7 +105,7 @@ class CoreHandlers(commands.Cog):
 
             info_embed.add_field(name="User", value=value)
 
-            await console.send(embeds=[*traceback_embeds, info_embed])
+            await self.bot.console.send(embeds=[*traceback_embeds, info_embed])
 
 
 async def setup(bot):

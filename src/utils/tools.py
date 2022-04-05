@@ -43,13 +43,14 @@ def convert_time(arg):
     return res
 
 
-def error_to_embed(error: Exception = None):
+def error_to_embed(bot, error: Exception = None):
     traceback_text: str = (
         "".join(traceback.format_exception(type(error), error, error.__traceback__))
         if error
         else traceback.format_exc()
     )
-    print(traceback.format_exc())
+    print(traceback_text)
+    bot.logger.error(traceback_text)
 
     length: int = len(traceback_text)
     chunks: int = math.ceil(length / 1990)

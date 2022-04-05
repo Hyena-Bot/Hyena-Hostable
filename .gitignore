@@ -6,3 +6,4 @@ __pycache__
 discord.py
 bot_logs.log
 *.sqlite
+config.yml

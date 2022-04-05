@@ -4,8 +4,6 @@ bot_config:
     bot_prefix: "-" # your bot's prefix in quotation marks 
     owners_id: # the IDs of the owners of the bots
         - 711444754080071714
-        - 832660720495362078
-        - 918703165648539700
     cogs_not_to_load: 
         - ""
     # add cogs which you dont want to use in a list for example:
@@ -15,6 +13,7 @@ bot_config:
     # etc.....
     mod_action_logs_channel: 814895166141628426 # the channel to get moderation action logs errors eg. ban/kick etc.
     errors_channel: 814895166141628426 # the secret channel to get bot errors
+
     statuses: # statuses you want to be displayed in your bot
         - with the ban hammer!
         - hey I'm the new and improved hostable hyena!
@@ -26,3 +25,30 @@ bot_config:
     success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good
     # here's a good one-
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
+    
+    failure_emoji: "❌" # default x mark emoji
+
+automod_config:
+    spam: true
+    spam_messages_back_to_back: 5 # Threshold cap
+    spam_message_word_limit: 500 # Words/message
+
+    badwords: true
+    custom_badwords:
+        - null # replace null with the badword needed. Most are already provided
+
+    caps: true
+    caps_threshold: 80 
+
+    invites: true
+
+    phish: true
+
+    warn_message: "Please refrain from sending rule breaking messages $mention."
+    embed_warn_message: true
+    delete_message_after: 5
+    
+    ignored_channels:
+        - null # add the channel ids, where automod will be ignored.
+
+# CLONE this file to config.yml ( do not delete this one )

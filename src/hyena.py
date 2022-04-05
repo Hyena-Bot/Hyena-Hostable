@@ -36,6 +36,7 @@ import random
 import traceback
 from random import choice
 
+import aiohttp
 import aiosqlite
 import discord
 import yaml
@@ -48,6 +49,10 @@ load_dotenv()
 
 
 class Bot(commands.Bot):
+    """
+    Base subclass of  commands.Bot, with custom methods added.
+    """
+
     def __init__(self, *args, **kwargs):
         self.config = self._load_config()
         super().__init__(
@@ -63,8 +68,11 @@ class Bot(commands.Bot):
         )
 
         self.help_command = None
-        self.secrets = {x: y for x, y in os.environ.items() if x in ["TOKEN"]}
+        self.secrets = {
+            x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN"]
+        }
         self.get_commands = self._get_total_commands
+        self.version = "1.0.0a"
         self.colors = []
         self._cogs = [
             f"cogs.{cog[:-3]}"
@@ -74,6 +82,7 @@ class Bot(commands.Bot):
             and not (cog in self.config["bot_config"]["cogs_not_to_load"])
         ]
         self.success_emoji = self.config["bot_config"]["success_emoji"]
+        self.failure_emoji = self.config["bot_config"]["failure_emoji"]
         self.logger = self._configure_logging()
         self._gen_colors = lambda: choice(
             [int(x, 16) for x in self.config["bot_config"]["colors"]]
@@ -90,6 +99,10 @@ class Bot(commands.Bot):
 
     async def setup_hook(self):
         await self._connect_databases()
+        self.session = aiohttp.ClientSession()
+        self.console = await self.fetch_channel(
+            self.config["bot_config"]["errors_channel"]
+        )
 
         try:
             for cog in self._cogs:
@@ -105,6 +118,11 @@ class Bot(commands.Bot):
 
     async def _connect_databases(self):
         self._action_logs_db = await aiosqlite.connect("./data/action-logs.sqlite")
+        self._warns_db = await aiosqlite.connect("./data/warns.sqlite")
+
+    async def close(self):
+        await self.session.close()
+        await super().close()
 
     def run(self):
         super().run(self.secrets["TOKEN"])
@@ -118,8 +136,7 @@ class Bot(commands.Bot):
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
-        console = self.get_channel(self.config["bot_config"]["errors_channel"])
-        embeds = self.tools.error_to_embed()
+        embeds = self.tools.error_to_embed(bot)
         context_embed = discord.Embed(
             title="Context",
             description=f"**Event**: {event_method}",
@@ -155,6 +172,7 @@ class Bot(commands.Bot):
             ("handlers", "core", "core-handlers"): "core-handler",
             ("timeout", "mute", "to"): "timeout",
             ("action-logs", "actions", "alogs"): "action-logs",
+            ("warns", "warn", "warnings"): "warns",
         }
 
         for alias, cog in aliases.items():
