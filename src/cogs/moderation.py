@@ -353,7 +353,7 @@ class Moderation(commands.Cog):
         ```
         """
         member = str(member).strip()
-        bans = await interaction.guild.bans()
+        bans = [entry async for entry in interaction.guild.bans()]
         unbanned_user = None
         success = False
 
@@ -385,8 +385,8 @@ class Moderation(commands.Cog):
                 moderator=interaction.user,
                 member=member,
                 description=(
-                    f"**Action:** \Revoke ban\n"
-                    f"**User:** \n`{member}`\n"
+                    f"**Action:** \nRevoke ban\n"
+                    f"**User:** \n`{unbanned_user}`\n"
                     f"**Moderator:** \n`{interaction.user}`\n"
                     f"**Reason:** \n{reason}\n"
                 ),
@@ -394,7 +394,7 @@ class Moderation(commands.Cog):
             )
             await self.bot._action_logger._log_action(
                 {
-                    "user_id": member.id,
+                    "user_id": unbanned_user.id,
                     "data": {
                         "action": "Revoke ban",
                         "reason": reason,
