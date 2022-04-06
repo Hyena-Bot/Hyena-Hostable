@@ -1,3 +1,35 @@
+"""
+Licensed under GNU General Public License v3.0
+
+
+Permissions of this strong copyleft license are 
+conditioned on making available complete source 
+code of licensed works and modifications, which 
+include larger works using a licensed work, 
+under the same license. Copyright and license 
+notices must be preserved. Contributors provide
+an express grant of patent rights.
+
+Permissions:
+    Commercial use
+    Modification
+    Distribution
+    Patent use
+    Private use
+
+Limitations:
+    Liability
+    Warranty
+
+Conditions:
+    License and copyright notice
+    State changes
+    Disclose source
+    Same license
+
+Kindly check out ../LICENSE
+"""
+
 from os import listdir, path, remove
 from os.path import exists
 
@@ -28,6 +60,7 @@ class FileInput(ui.Modal):
 
 
 class Create(FileInput, title="Create file..."):
+    """Create file modal"""
     async def on_submit(self, interaction: discord.Interaction) -> None:
         with open("./assets/files/{}".format(self.name.value), "w") as f:
             f.write(self.text.value)
@@ -38,6 +71,7 @@ class Create(FileInput, title="Create file..."):
 
 
 class Edit(FileInput, title="Edit file..."):
+    """Edit file modal"""
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -51,6 +85,7 @@ class Edit(FileInput, title="Edit file..."):
 
 
 class Append(FileInput, title="Append to file..."):
+    """Append to file modal"""
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -67,6 +102,7 @@ delattr(FileInput, "text")
 
 
 class Delete(FileInput, title="Delete a file..."):
+    """Delete file modal"""
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -78,6 +114,7 @@ class Delete(FileInput, title="Delete a file..."):
 
 
 class View(FileInput, title="View a file..."):
+    """View file modal"""
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -99,11 +136,35 @@ class FileSystem(commands.Cog):
     @files.command(name="create", description="Create a new file")
     @app_commands.checks.cooldown(1, 5)
     async def _create_file(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        Create a new file
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /file create
+        ```
+        """
         await interaction.response.send_modal(Create())
 
     @files.command(name="edit", description="Edit an already existing file")
     @app_commands.checks.cooldown(1, 5)
     async def _create_file(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        Edit an already existing file
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /file edit
+        ```
+        """
         await interaction.response.send_modal(Edit())
 
     @files.command(
@@ -111,11 +172,35 @@ class FileSystem(commands.Cog):
     )
     @app_commands.checks.cooldown(1, 5)
     async def _append_file(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        Append (add) to an already existing file
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /file append
+        ```
+        """
         await interaction.response.send_modal(Append())
 
     @files.command(name="delete", description="Delete an existing file")
     @app_commands.checks.cooldown(1, 5)
     async def _delete_file(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        Delete an existing file
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /file delete
+        ```
+        """
         await interaction.response.send_modal(Delete())
 
     @files.command(name="view", description="view an existing file")
@@ -128,6 +213,18 @@ class FileSystem(commands.Cog):
     )
     @app_commands.checks.cooldown(1, 5)
     async def _view_all_file(self, interaction: discord.Interaction):
+        """
+        **Description:**
+        View names of all the files that exist
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /file view
+        ```
+        """
         await interaction.response.send_message(
             "\n".join(
                 [
