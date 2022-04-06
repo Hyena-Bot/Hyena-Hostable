@@ -61,6 +61,7 @@ class FileInput(ui.Modal):
 
 class Create(FileInput, title="Create file..."):
     """Create file modal"""
+
     async def on_submit(self, interaction: discord.Interaction) -> None:
         with open("./assets/files/{}".format(self.name.value), "w") as f:
             f.write(self.text.value)
@@ -72,6 +73,7 @@ class Create(FileInput, title="Create file..."):
 
 class Edit(FileInput, title="Edit file..."):
     """Edit file modal"""
+
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -86,6 +88,7 @@ class Edit(FileInput, title="Edit file..."):
 
 class Append(FileInput, title="Append to file..."):
     """Append to file modal"""
+
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -103,6 +106,7 @@ delattr(FileInput, "text")
 
 class Delete(FileInput, title="Delete a file..."):
     """Delete file modal"""
+
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
@@ -115,6 +119,7 @@ class Delete(FileInput, title="Delete a file..."):
 
 class View(FileInput, title="View a file..."):
     """View file modal"""
+
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if not exists("./assets/files/{}".format(self.name.value)):
             return await interaction.response.send_message("This file does not exist!")
