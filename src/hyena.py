@@ -177,6 +177,7 @@ class Bot(commands.Bot):
             ("timeout", "mute", "to"): "timeout",
             ("action-logs", "actions", "alogs"): "action-logs",
             ("warns", "warn", "warnings"): "warns",
+            ("file-system", "files", "filesys", "file"): "file-system",
         }
 
         for alias, cog in aliases.items():

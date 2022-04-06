@@ -73,23 +73,18 @@ class Automoderation(commands.Cog):
 
         embed = discord.Embed(color=discord.Color.green())
         embed.title = "Automod Setup For {}".format(interaction.guild.name)
-        embed.description = "`Automod Message:` {}".format(
-            str(self.bot.config["automod_config"]["warn_message"]).replace(
-                "$mention", interaction.user.mention
-            )
-        )
-
-        filters = ["spam", "badwords", "caps", "invites", "phish"]
+        embed.description = f"`Automod Config` for {interaction.guild.name}"
+        filters = ["spam", "badwords", "caps", "invites", "phish", "nsfw", "mentions"]
         ignored_channels = [
             self.bot.get_channel(channel).mention
             for channel in self.bot.config["automod_config"]["ignored_channels"]
             if channel is not None
         ]
 
-        for filter in filters:
-            status = automod.is_enabled(filter)
+        for _filter in filters:
+            status = automod.is_enabled(_filter)
             embed.add_field(
-                name=f"{filter.title()} Filter",
+                name=f"{_filter.title()} Filter",
                 value=self._get_emoji(status),
                 inline=False,
             )
