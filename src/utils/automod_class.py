@@ -239,7 +239,8 @@ class Automod:
             "invites",
             "phish",
             "nsfw",
-            "mention",
+            "mentions",
+            "caps",
         ]:
             return (None, "Invalid option supplied.")
         try:
