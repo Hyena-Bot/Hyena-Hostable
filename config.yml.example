@@ -4,6 +4,7 @@ bot_config:
     bot_prefix: "-" # your bot's prefix in quotation marks 
     owners_id: # the IDs of the owners of the bots
         - 711444754080071714
+        - 918703165648539700
     cogs_not_to_load: 
         - ""
     # add cogs which you dont want to use in a list for example:
@@ -35,20 +36,21 @@ automod_config:
 
     badwords: true
     custom_badwords:
-        - null # replace null with the badword needed. Most are already provided
+        - null # replace null with the badword needed. Defaults are given in src/data/filtered-words.json
 
     caps: true
     caps_threshold: 80 
-
     invites: true
+    phish: false
+    nsfw: true
 
-    phish: true
+    mentions: true # spam mention protection
+    mention_limit: 7 # number of mentions allowed in a single message
+    allow_duplicate_mentions: false # will consider duplicate mentions if set to false
 
     warn_message: "Please refrain from sending rule breaking messages $mention."
     embed_warn_message: true
-    delete_message_after: 5
+    delete_message_after: 3
     
     ignored_channels:
         - null # add the channel ids, where automod will be ignored.
-
-# CLONE this file to config.yml ( do not delete this one )

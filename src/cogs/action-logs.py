@@ -39,11 +39,14 @@ from discord.ext import commands
 
 
 class ActionLogs(commands.Cog):
+    """Moderation action logs cog"""
+
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._action_logs_db
 
     def _format_log(self, guild: discord.Guild, _action: dict, serial: int) -> str:
+        """Format a given log record"""
         moderator = guild.get_member(_action["moderator"])
         others = [
             f"{x.title()}: `{y}`"

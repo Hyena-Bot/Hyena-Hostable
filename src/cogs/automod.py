@@ -34,15 +34,18 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from hyena import Bot
-from utils.automod_class import Automod
-
 
 class Automoderation(commands.Cog):
-    def __init__(self, bot: Bot):
+    """Automoderation commands & handlers"""
+
+    def __init__(self, bot):
         self.bot = bot
+        self.caps_limit = self.bot.config["automod_config"]["caps_threshold"]
+        self.delete_after = self.bot.config["automod_config"]["delete_message_after"]
+        self.mention_limit = self.bot.config["automod_config"]["mention_limit"]
 
     def _get_emoji(self, status: bool):
+        """Returns the emoji for the given status [True|False]"""
         if status is True:
             return f"{self.bot.success_emoji} Enabled"
         else:
@@ -50,31 +53,38 @@ class Automoderation(commands.Cog):
 
     @app_commands.command(
         name="automod-configuration",
-        description="Shows the bots automod configuration.",
+        description="Shows the bot's automod configuration.",
     )
     @app_commands.checks.has_permissions(manage_messages=True)
     async def automod_config(self, interaction: discord.Interaction):
-        automod = Automod(self.bot, interaction.message)
+        """
+        **Description:**
+        Shows the bot's automod config
+
+        **Args:**
+        • None
+
+        **Syntax:**
+        ```
+        /automod-configuration
+        ```
+        """
+        automod = self.bot.AutomodHandler(self.bot, interaction.message)
 
         embed = discord.Embed(color=discord.Color.green())
         embed.title = "Automod Setup For {}".format(interaction.guild.name)
-        embed.description = "`Automod Message:` {}".format(
-            str(self.bot.config["automod_config"]["warn_message"]).replace(
-                "$mention", interaction.user.mention
-            )
-        )
-
-        filters = ["spam", "badwords", "caps", "invites", "phish"]
+        embed.description = f"`Automod Config` for {interaction.guild.name}"
+        filters = ["spam", "badwords", "caps", "invites", "phish", "nsfw", "mentions"]
         ignored_channels = [
             self.bot.get_channel(channel).mention
             for channel in self.bot.config["automod_config"]["ignored_channels"]
             if channel is not None
         ]
 
-        for filter in filters:
-            status = automod.is_enabled(filter)
+        for _filter in filters:
+            status = automod.is_enabled(_filter)
             embed.add_field(
-                name=f"{filter.title()} Filter",
+                name=f"{_filter.title()} Filter",
                 value=self._get_emoji(status),
                 inline=False,
             )
@@ -84,66 +94,76 @@ class Automoderation(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    async def _handler(self, message: discord.Message) -> None:
+        """The main automod handler"""
+        automod = self.bot.AutomodHandler(self.bot, message)
+        member = message.guild.get_member(message.author.id)
+
+        if (
+            not message.guild
+            or message.author.id == self.bot.user.id
+            or automod.is_author_mod()
+            or automod.is_ignored_channel()
+        ):
+            return
+
+        if await automod.is_badwords():
+            await message.channel.send(
+                f"{member.mention}, that word is blacklisted.",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
+        elif await automod.is_caps():
+            await message.channel.send(
+                f"{member.mention}, you exceeded the capitals limit : `{self.caps_limit}`% of your message length",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
+        elif await automod.is_invite():
+            await message.channel.send(
+                f"{member.mention}, do not send invite links.",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
+        elif await automod.is_spam():
+            await message.channel.send(
+                f"{member.mention}, stop spamming idiot.", delete_after=2
+            )
+            await automod.take_action()
+
+        elif await automod.is_phish_url():
+            await message.channel.send(
+                f"{member.mention}, you really think you can phish people?",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
+        elif await automod.is_nsfw():
+            await message.channel.send(
+                f"{member.mention}, bruv you are not allowed to send NSFW content here.",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
+        elif await automod.excess_mentions():
+            await message.channel.send(
+                f"{member.mention}, too many mentions in a message. Maximum allowed: {self.mention_limit}",
+                delete_after=self.delete_after,
+            )
+            await automod.take_action()
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if message.author.id == self.bot.user.id:
-            return
-
-        automod = Automod(self.bot, message)
-
-        if automod.is_author_mod():
-            return
-
-        if automod.is_ignored_channel():
-            return
-
-        if await automod.is_badwords():
-            await automod.take_action()
-
-        elif await automod.is_caps():
-            await automod.take_action()
-
-        elif await automod.is_invite():
-            await automod.take_action()
-
-        elif await automod.is_spam():
-            await automod.take_action()
-
-        elif await automod.is_phish_url():
-            await automod.take_action()
+        """Moderate on message"""
+        await self._handler(message)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message):
-        if before.content == after.content:
-            return
-
-        message = after
-
-        if before.author.id == self.bot.user.id:
-            return
-
-        automod = Automod(self.bot, message)
-
-        if automod.is_author_mod():
-            return
-
-        if automod.is_ignored_channel():
-            return
-
-        if await automod.is_badwords():
-            await automod.take_action()
-
-        elif await automod.is_caps():
-            await automod.take_action()
-
-        elif await automod.is_invite():
-            await automod.take_action()
-
-        elif await automod.is_spam():
-            await automod.take_action()
-
-        elif await automod.is_phish_url():
-            await automod.take_action()
+    async def on_message_edit(self, _: discord.Message, after: discord.Message):
+        """Moderate on a message edit"""
+        await self._handler(after)
 
 
 async def setup(bot):

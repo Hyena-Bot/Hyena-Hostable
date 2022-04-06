@@ -43,7 +43,7 @@ import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from utils import action_logger, checks, tools
+from utils import action_logger, automod_class, checks, tools
 
 load_dotenv()
 
@@ -69,7 +69,9 @@ class Bot(commands.Bot):
 
         self.help_command = None
         self.secrets = {
-            x: y for x, y in os.environ.items() if x in ["TOKEN", "AZRAEL_API_TOKEN"]
+            x: y
+            for x, y in os.environ.items()
+            if x in ["TOKEN", "AZRAEL_API_TOKEN", "DEEPAI_API_KEY"]
         }
         self.get_commands = self._get_total_commands
         self.version = "1.0.0a"
@@ -92,6 +94,7 @@ class Bot(commands.Bot):
         self.checks = checks
         self._action_logs_db = None
         self._action_logger = None
+        self.AutomodHandler = None
 
     def _bot_command_prefix(self, bot, _):
         base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
@@ -103,6 +106,7 @@ class Bot(commands.Bot):
         self.console = await self.fetch_channel(
             self.config["bot_config"]["errors_channel"]
         )
+        self.AutomodHandler = automod_class.Automod
 
         try:
             for cog in self._cogs:
@@ -136,7 +140,7 @@ class Bot(commands.Bot):
 
     async def on_error(self, event_method: str, *args, **kwargs) -> None:
         self.logger.error(traceback.format_exc())
-        embeds = self.tools.error_to_embed(bot)
+        embeds = self.tools.error_to_embed(self)
         context_embed = discord.Embed(
             title="Context",
             description=f"**Event**: {event_method}",
@@ -173,6 +177,7 @@ class Bot(commands.Bot):
             ("timeout", "mute", "to"): "timeout",
             ("action-logs", "actions", "alogs"): "action-logs",
             ("warns", "warn", "warnings"): "warns",
+            ("file-system", "files", "filesys", "file"): "file-system",
         }
 
         for alias, cog in aliases.items():
