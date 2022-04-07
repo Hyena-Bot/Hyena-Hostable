@@ -40,6 +40,8 @@ from discord.ext import commands
 
 
 class Timeout(commands.Cog):
+    """Timeout (mute) cog"""
+
     def __init__(self, bot):
         self.bot = bot
 

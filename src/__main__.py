@@ -55,6 +55,7 @@ async def app_command_error(
     ],
     error: discord.app_commands.AppCommandError,
 ):
+    """Slash commands error handler"""
     error = getattr(error, "original", error)
 
     # if isinstance(error, bot.checks.CheckFailed):
@@ -137,6 +138,7 @@ async def app_command_error(
 
 @bot.command(name="load")
 async def load(ctx, cog):
+    """Load a given cog"""
     if ctx.author.id not in bot.owner_ids:
         return await ctx.send("You are not the developer!")
 
@@ -146,6 +148,7 @@ async def load(ctx, cog):
 
 @bot.command(name="unload")
 async def unload(ctx, cog):
+    """Unload a given cog"""
     if ctx.author.id not in bot.owner_ids:
         return await ctx.send("You are not the developer!")
 
@@ -155,6 +158,7 @@ async def unload(ctx, cog):
 
 @bot.command(name="reload")
 async def reload(ctx, cog):
+    """Reload a given cog"""
     if ctx.author.id not in bot.owner_ids:
         return await ctx.send("You are not the developer!")
 
@@ -164,6 +168,7 @@ async def reload(ctx, cog):
 
 @bot.command(name="sync")
 async def _sync(ctx):
+    """sync all the slash commands"""
     if ctx.author.id not in bot.owner_ids:
         return await ctx.send("You are not the developer!")
 
@@ -173,6 +178,7 @@ async def _sync(ctx):
 
 
 def cleanup_code(content):
+    """Cleanup code blocks"""
     if content.startswith("```") and content.endswith("```"):
         return "\n".join(content.split("\n")[1:-1])
 
@@ -181,6 +187,7 @@ def cleanup_code(content):
 
 @bot.command(name="eval")
 async def eval_command(ctx, *, code='await ctx.send("Hello World")'):
+    """Evaluate a given code"""
     if ctx.author.id in bot.owner_ids:
         embed = discord.Embed(color=discord.Colour.green())
         embed.set_author(

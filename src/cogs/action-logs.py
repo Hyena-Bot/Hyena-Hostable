@@ -39,11 +39,14 @@ from discord.ext import commands
 
 
 class ActionLogs(commands.Cog):
+    """Moderation action logs cog"""
+
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._action_logs_db
 
     def _format_log(self, guild: discord.Guild, _action: dict, serial: int) -> str:
+        """Format a given log record"""
         moderator = guild.get_member(_action["moderator"])
         others = [
             f"{x.title()}: `{y}`"
@@ -59,14 +62,14 @@ class ActionLogs(commands.Cog):
         return _str
 
     @app_commands.command(
-        name="logs", description="Check moderation actions for a given user"
+        name="actions", description="Check moderation actions for a given user"
     )
     @app_commands.describe(
         member="The member to check the moderation actions for", page="The page number"
     )
     @app_commands.checks.has_permissions(manage_guild=True)
     @app_commands.checks.cooldown(1, 3)
-    async def _logs(self, interaction, member: discord.User, page: Optional[int] = 1):
+    async def _action(self, interaction, member: discord.User, page: Optional[int] = 1):
         """
         **Description:**
         Check moderation actions for a given user.
@@ -77,7 +80,7 @@ class ActionLogs(commands.Cog):
 
         **Syntax:**
         ```
-        /logs <member> [page]
+        /actions <member> [page]
         ```
         """
 
@@ -133,12 +136,12 @@ class ActionLogs(commands.Cog):
         await cursor.close()
 
     @app_commands.command(
-        name="clear-logs", description="Clears the action logs for the given member"
+        name="actions-clear", description="Clears the action logs for the given member"
     )
     @app_commands.describe(member="The member to clear the moderation actions for")
     @app_commands.checks.has_permissions(manage_guild=True)
     @app_commands.checks.cooldown(1, 3)
-    async def _clear_logs(self, interaction, member: discord.User):
+    async def _actions_clear(self, interaction, member: discord.User):
         """
         **Description:**
         Clears the action logs for the given member
@@ -148,7 +151,7 @@ class ActionLogs(commands.Cog):
 
         **Syntax:**
         ```
-        /clear-logs <member>
+        /actions-clear <member>
         ```
         """
 
@@ -166,7 +169,7 @@ class ActionLogs(commands.Cog):
             )
             await interaction.response.send_message(
                 f"Cleared all action logs for {member}. \n**Note:** For warns & some others it will \
-                not clear the actual warns, just the logs."
+not clear the actual warns, just the logs."
             )
 
         await self._db.commit()

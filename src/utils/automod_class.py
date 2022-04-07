@@ -7,57 +7,69 @@ import re
 import discord
 from better_profanity import profanity
 
-from hyena import Bot
-
 # Constants
 INVITE_REGEX = re.compile(
     r"(https://www\.|https://|www\.)?(discord.gg|discord.com/invite|dis.gd/invite|dsc.io|dsc.gg|invite.gg)/[a-zA-z0-9_-]"
 )
+URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 
 
-# Helper Functions
+def default_filters():
+    with open("./data/filtered-words.json") as f:
+        return json.load(f)
 
 
-def format_message(msg: str, user: discord.Member) -> str:
-    msg = msg.replace("$mention", user.mention)  # more soon
-    return msg
-
-
-# Automod base class
 class Automod:
-    def __init__(self, bot: Bot, message: discord.Message):
+    """Automod base class with all the required methods & functionality"""
+
+    def __init__(self, bot, message: discord.Message):
         self.bot = bot
         self.message = message
+        self.default_filters = default_filters()
+
+    # ------------ HELPER ------------
+
+    async def api_nsfw_detector(self, url):
+        """Make request to the nsfw api with a given URL"""
+        headers = {"Api-Key": self.bot.secrets["DEEPAI_API_KEY"]}
+        data = {"image": url}
+        async with self.bot.session.post(
+            "https://api.deepai.org/api/nsfw-detector", headers=headers, data=data
+        ) as r:
+            return await r.json()
+
+    # ------------ HANDLERS ------------
 
     async def take_action(self) -> None:
-        warn_message = str(self.bot.config["automod_config"]["warn_message"])
-        delete_after = int(self.bot.config["automod_config"]["delete_message_after"])
-
+        """Basically, delete the message"""
         with contextlib.suppress(discord.Forbidden, discord.NotFound):
             await self.message.delete()
-            await self.message.channel.send(
-                format_message(warn_message, self.message.author),
-                delete_after=delete_after,
-            )
 
-    async def is_badwords(self) -> bool:  # TODO add more stuff & docs
+    async def is_badwords(self) -> bool:
+        """Checks for profanity words"""
         if not self.is_enabled("badwords"):
             return False
         else:
-            custom_badwords = self.bot.config["automod_config"]["custom_badwords"]
-            if custom_badwords:
-                try:
-                    profanity.add_censor_words(custom_badwords)
-                except:
-                    pass
+            custom_badwords = [
+                x
+                for x in self.bot.config["automod_config"]["custom_badwords"]
+                if not x in [None, "", " "]
+            ]
+            if not custom_badwords:
+                custom_badwords = self.default_filters
+            try:
+                profanity.add_censor_words(custom_badwords)
+            except:
+                pass
 
             badword = profanity.contains_profanity(self.message.content)
-            if badword is True:
+            if badword == True:
                 return True
             else:
                 return False
 
     async def is_caps(self) -> bool:  # TODO docs
+        """Checks for too many capitals"""
         if not self.is_enabled("caps"):
             return False
         else:
@@ -66,8 +78,8 @@ class Automod:
             length = len(self.message.content)
 
             if (
-                length < 5
-            ):  # if there are less then 5 words in our message we can ignore it.
+                length < 7
+            ):  # if there are less then 7 words in our message we can ignore it.
                 return False
 
             for word in self.message.content:
@@ -85,6 +97,7 @@ class Automod:
                 return False
 
     async def is_invite(self) -> bool:
+        """Checks for invite links"""
         if not self.is_enabled("invites"):
             return False
         else:
@@ -96,6 +109,7 @@ class Automod:
                 return False
 
     async def is_spam(self) -> bool:
+        """Anti spam system"""
         if not self.is_enabled("spam"):
             return False
         else:
@@ -123,12 +137,13 @@ class Automod:
                 return False
 
     async def is_phish_url(self) -> bool:
+        """Anti phishing systems"""
         if not self.is_enabled("phish"):
             return False
 
         else:
             header = {
-                "Authorization": self.bot.secrets["anti_phish_token"],
+                "Authorization": self.bot.secrets["AZRAEL_API_TOKEN"],
                 "Content-Type": "application/json",
                 "User-Agent": "Azrael Header",
             }
@@ -142,6 +157,45 @@ class Automod:
                 return True
             else:
                 return False
+
+    async def is_nsfw(self) -> bool:
+        """Checks for nsfw attachments in message"""
+        if not self.is_enabled("nsfw") or self.message.channel.is_nsfw():
+            return False
+
+        regex_result = re.findall(URL_REGEX, self.message.content)
+        urls = [x[0] for x in regex_result]
+        attachments = [x.url for x in self.message.attachments]
+        image_urls = sorted(set([*urls, *attachments]))
+
+        for url in image_urls:
+            res = await self.api_nsfw_detector(url)
+            if res.get("err") is not None:
+                continue
+            try:
+                score = res["output"]["nsfw_score"]
+                if score >= 0.8:
+                    return True
+            except KeyError:
+                pass
+
+    async def excess_mentions(self):
+        """Checks for too many mentions in the message"""
+        if not self.is_enabled("mentions"):
+            return False
+
+        dup = self.bot.config["automod_config"]["allow_duplicate_mentions"]
+        mentions = []
+        for i in self.message.raw_mentions:
+            if i != self.message.author.id:
+                mentions.append(i)
+
+        if dup == True:
+            mentions = sorted(set(mentions))
+
+        limit = self.bot.config["automod_config"]["mention_limit"]
+        if len(mentions) > limit:
+            return True
 
     def dm_embed(self, reason: str = None) -> discord.Embed:
         """Returns a base embed for dm'ing the user."""
@@ -172,15 +226,25 @@ class Automod:
             return False
 
     def is_ignored_channel(self) -> bool:
+        """Returns true or false considering if the channel of the message is ignored in the config"""
         ignored_channels = self.bot.config["automod_config"]["ignored_channels"]
         if ignored_channels:
             return self.message.channel.id in ignored_channels
 
-    def is_enabled(self, filter: str):
-        if filter.lower() not in ["badwords", "spam", "invites", "phish"]:
+    def is_enabled(self, _filter: str):
+        """ "Returns true or false considering if the given handler is enabled in the config"""
+        if _filter.lower() not in [
+            "badwords",
+            "spam",
+            "invites",
+            "phish",
+            "nsfw",
+            "mentions",
+            "caps",
+        ]:
             return (None, "Invalid option supplied.")
         try:
-            selected_filter = self.bot.config["automod_config"][filter]
+            selected_filter = self.bot.config["automod_config"][_filter]
         except KeyError:
             return False
 
