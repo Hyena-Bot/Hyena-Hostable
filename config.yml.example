@@ -41,7 +41,7 @@ automod_config:
     caps: true
     caps_threshold: 80 
     invites: true
-    phish: false
+    phish: true
     nsfw: true
 
     mentions: true # spam mention protection

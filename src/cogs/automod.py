@@ -134,10 +134,20 @@ class Automoderation(commands.Cog):
             )
             await automod.take_action()
 
-        elif await automod.is_phish_url():
+        elif _phish_res := (await automod.is_phish_url()):
+            desc = "\n".join(
+                [
+                    f"Domain: {match['url'][:12]}..., Type: {match['type']}, Surety: {float(match['trust_rating']) * 100}%"
+                    for match in _phish_res[1]
+                ]
+            )
             await message.channel.send(
-                f"{member.mention}, you really think you can phish people?",
-                delete_after=self.delete_after,
+                (
+                    f"{member.mention}, you really think you can phish people?\n\n"
+                    "Anti Phish Test Results:\n"
+                    f"```{desc}```"
+                ),
+                delete_after=7,
             )
             await automod.take_action()
 
