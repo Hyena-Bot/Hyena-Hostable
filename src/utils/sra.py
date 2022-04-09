@@ -3,13 +3,11 @@ import io
 import discord
 from discord import Embed, File
 
-from hyena import Bot
-
 
 class SRA:
     """Class with helper methods for getting/posting data from/to some random api."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot):
         self.bot = bot
 
     async def get_data_for(self, endpoint: str, *, name: str = "endpoint") -> dict:

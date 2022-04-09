@@ -35,27 +35,22 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils.sra import SRA
-
 
 class Fun(commands.Cog):
     """Cog full of commands to entertain your community."""
 
     def __init__(self, bot) -> None:
         self.bot = bot
+        self.sra = self.bot.SRA(self.bot)
 
     # ---------------------------- General Fun cmds go below ------------------------------------
-    fun = app_commands.Group(
-        name="fun", description="Commands for entertaining your community."
-    )
 
-    @fun.command(name="pokedex", description="The official pokedex.")
+    @app_commands.command(name="pokedex", description="The official pokedex.")
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     @app_commands.describe(pokemon="The pokemon whose data to show.")
     async def _pokedex(self, interaction: discord.Interaction, pokemon: str) -> None:
         """Gets the info the given pokemon from the pokedex."""
-        sra = SRA(self.bot)
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/pokedex?pokemon={pokemon}", name="pokemon"
         )
         if results:
@@ -114,16 +109,15 @@ class Fun(commands.Cog):
 
     # ---------------------------- Fun -Facts cmds go below ------------------------------------
 
-    @fun.command(
+    @app_commands.command(
         name="panda-facts",
         description="Shows facts about pandas with an image as well.",
     )
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     async def panda_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
-        sra = SRA(self.bot)
         name = "panda facts"
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/animal/red_panda", name=name
         )
 
@@ -149,15 +143,14 @@ class Fun(commands.Cog):
                 f"Could not fetch the results for `{name}`, try again later."
             )
 
-    @fun.command(
+    @app_commands.command(
         name="fox-facts", description="Shows facts about foxs with an image as well."
     )
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     async def fox_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
-        sra = SRA(self.bot)
         name = "fox facts"
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/animal/fox", name=name
         )
 
@@ -183,15 +176,14 @@ class Fun(commands.Cog):
                 f"Could not fetch the results for `{name}`, try again later."
             )
 
-    @fun.command(
+    @app_commands.command(
         name="cat-facts", description="Shows facts about cats with an image as well."
     )
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     async def cat_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
-        sra = SRA(self.bot)
         name = "cat facts"
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/animal/cat", name=name
         )
 
@@ -217,16 +209,15 @@ class Fun(commands.Cog):
                 f"Could not fetch the results for `{name}`, try again later."
             )
 
-    @fun.command(
+    @app_commands.command(
         name="koala-facts",
         description="Shows facts about koalas with an image as well.",
     )
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     async def koala_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
-        sra = SRA(self.bot)
         name = "cat facts"
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/animal/koala", name=name
         )
 
@@ -252,14 +243,13 @@ class Fun(commands.Cog):
                 f"Could not fetch the results for `{name}`, try again later."
             )
 
-    @fun.command(
+    @app_commands.command(
         name="bird-facts", description="Shows facts about birds with an image as well."
     )
     async def bird_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
-        sra = SRA(self.bot)
         name = "bird facts"
-        results = await sra.get_data_for(
+        results = await self.sra.get_data_for(
             f"https://some-random-api.ml/animal/birb", name=name
         )
 

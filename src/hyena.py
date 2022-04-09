@@ -43,7 +43,7 @@ import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from utils import action_logger, automod_class, checks, tools
+from utils import action_logger, automod_class, checks, sra, tools
 
 load_dotenv()
 
@@ -93,6 +93,7 @@ class Bot(commands.Bot):
         self._action_logs_db = None
         self._action_logger = None
         self.AutomodHandler = None
+        self.SRA = sra.SRA
 
     def _bot_command_prefix(self, bot, _):
         base = [f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "]
@@ -131,7 +132,7 @@ class Bot(commands.Bot):
 
     async def on_ready(self):
         self.change_status.start()
-        print(f"Logged in as {self.user} (ID: {self.user.id})")
+        print(f"\nLogged in as {self.user} (ID: {self.user.id})")
         print("------")
 
         self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
@@ -177,6 +178,8 @@ class Bot(commands.Bot):
             ("warns", "warn", "warnings"): "warns",
             ("file-system", "files", "filesys", "file"): "file-system",
             ("afk",): "afk",
+            ("fun", "fun-commands"): "fun",
+            ("images", "image", "gen", "image-gen"): "image-gen",
         }
 
         for alias, cog in aliases.items():

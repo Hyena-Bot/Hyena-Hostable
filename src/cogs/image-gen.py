@@ -37,19 +37,18 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils.sra import SRA
-
 
 class ImageGen(commands.Cog):
     """Cog for manipulating user images."""
 
     def __init__(self, bot) -> None:
         self.bot = bot
+        self.sra = self.bot.SRA(self.bot)
 
-    # ---------------------------- Some Random Api image gen cmds go below ------------------------------------
+    # ------------------- SRA image gen cmds go below -------------------
 
     image_gen = app_commands.Group(
-        name="image-gen",
+        name="image",
         description="Want to edit someones avatar through discord? this is it.",
     )
 
@@ -68,9 +67,7 @@ class ImageGen(commands.Cog):
         if not member:
             member = interaction.user
 
-        sra = SRA(self.bot)
-
-        data = await sra.get_image_for(
+        data = await self.sra.get_image_for(
             member=member, endpoint="wasted", name="gta_wasted"
         )
 
@@ -99,7 +96,7 @@ class ImageGen(commands.Cog):
         if not member:
             member = interaction.user
 
-        sra = SRA(self.bot)
+        sra = self.sra(self.bot)
 
         data = await sra.get_image_for(
             member=member, endpoint="passed", name="gta_passed"

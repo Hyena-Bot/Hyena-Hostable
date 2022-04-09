@@ -1,0 +1,13 @@
+        """
+        **Description:**
+        Kick someone out of the server!
+
+        **Args:**
+        • `<member>` - The member to kick
+        • `[reason]` - The reason to kick the member
+
+        **Syntax:**
+        ```
+        /kick <member> [reason]
+        ```
+        """
