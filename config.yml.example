@@ -23,11 +23,11 @@ bot_config:
     colors:              # theme color of the bot (you will see them in the embeds) (in python hex format)
         - "0x3A4047"
         - "0xFFFDFC"
-    success_emoji: "<:success:905905851489988718>" # any success/verified emoji in your server that looks good
+    success_emoji: "\U00002705" # any success/verified emoji in your server that looks good
     # here's a good one-
     # https://cdn.discordapp.com/emojis/905905851489988718.webp?size=96&quality=lossless
     
-    failure_emoji: "❌" # default x mark emoji
+    failure_emoji: "\U0000274c" # default x mark emoji
 
 automod_config:
     spam: true
