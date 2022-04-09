@@ -1,9 +1,11 @@
+import asyncio
 import contextlib
 import datetime
 import json
 import os
 import re
 
+import aiohttp
 import discord
 from better_profanity import profanity
 
@@ -33,10 +35,17 @@ class Automod:
         """Make request to the nsfw api with a given URL"""
         headers = {"Api-Key": self.bot.secrets["DEEPAI_API_KEY"]}
         data = {"image": url}
-        async with self.bot.session.post(
-            "https://api.deepai.org/api/nsfw-detector", headers=headers, data=data
-        ) as r:
-            return await r.json()
+
+        try:
+            async with self.bot.session.post(
+                "https://api.deepai.org/api/nsfw-detector", headers=headers, data=data
+            ) as r:
+                return await r.json()
+        except (
+            asyncio.exceptions.TimeoutError,
+            aiohttp.client_exceptions.ClientConnectorError,
+        ):
+            return False
 
     # ------------ HANDLERS ------------
 
@@ -141,21 +150,26 @@ class Automod:
         if not self.is_enabled("phish"):
             return False
 
-        else:
+        if re.search(URL_REGEX, self.message.content):
             header = {
-                "Authorization": self.bot.secrets["AZRAEL_API_TOKEN"],
                 "Content-Type": "application/json",
-                "User-Agent": "Azrael Header",
+                "User-Agent": "Hyena-Hostable https://github.com/Hyena-Bot/Hyena-Hostable",
             }
-            data = json.dumps({"data": self.message.content})
+            data = json.dumps({"message": self.message.content})
 
-            async with self.bot.session.post(
-                "https://phish.azrael.gg/check", headers=header, data=data
-            ) as r:
-                results: dict = await r.json()
-            if results and results.get("matched", None) is True:
-                return True
-            else:
+            try:
+                async with self.bot.session.post(
+                    "https://anti-fish.bitflow.dev/check", headers=header, data=data
+                ) as r:
+                    results: dict = await r.json()
+                if results and results.get("match") is True:
+                    return True, results["matches"]
+                else:
+                    return False
+            except (
+                asyncio.exceptions.TimeoutError,
+                aiohttp.client_exceptions.ClientConnectorError,
+            ):
                 return False
 
     async def is_nsfw(self) -> bool:

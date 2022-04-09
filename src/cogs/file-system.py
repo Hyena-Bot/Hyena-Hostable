@@ -30,7 +30,7 @@ Conditions:
 Kindly check out ../LICENSE
 """
 
-from os import listdir, path, remove
+from os import listdir, remove
 from os.path import exists
 
 import discord
@@ -131,7 +131,7 @@ class View(FileInput, title="View a file..."):
 
 
 class FileSystem(commands.Cog):
-    """Utilities cog"""
+    """File system cog"""
 
     def __init__(self, bot):
         self.bot = bot

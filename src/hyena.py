@@ -69,9 +69,7 @@ class Bot(commands.Bot):
 
         self.help_command = None
         self.secrets = {
-            x: y
-            for x, y in os.environ.items()
-            if x in ["TOKEN", "AZRAEL_API_TOKEN", "DEEPAI_API_KEY"]
+            x: y for x, y in os.environ.items() if x in ["TOKEN", "DEEPAI_API_KEY"]
         }
         self.get_commands = self._get_total_commands
         self.version = "1.0.0a"
@@ -178,6 +176,7 @@ class Bot(commands.Bot):
             ("action-logs", "actions", "alogs"): "action-logs",
             ("warns", "warn", "warnings"): "warns",
             ("file-system", "files", "filesys", "file"): "file-system",
+            ("afk",): "afk",
         }
 
         for alias, cog in aliases.items():
