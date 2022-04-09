@@ -34,6 +34,7 @@ Kindly check out ../LICENSE
 import discord
 from discord import app_commands
 from discord.ext import commands
+
 from utils.sra import SRA
 
 
@@ -49,7 +50,7 @@ class Fun(commands.Cog):
     )
 
     @fun.command(name="pokedex", description="The official pokedex.")
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(2, 5, key = lambda i: (i.guild_id, i.user.id))
     @app_commands.describe(pokemon="The pokemon whose data to show.")
     async def _pokedex(self, interaction: discord.Interaction, pokemon: str) -> None:
         """Gets the info the given pokemon from the pokedex."""
@@ -117,7 +118,7 @@ class Fun(commands.Cog):
         name="panda-facts",
         description="Shows facts about pandas with an image as well.",
     )
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(2, 5, key = lambda i: (i.guild_id, i.user.id))
     async def panda_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
         sra = SRA(self.bot)
@@ -151,7 +152,7 @@ class Fun(commands.Cog):
     @fun.command(
         name="fox-facts", description="Shows facts about foxs with an image as well."
     )
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(2, 5, key = lambda i: (i.guild_id, i.user.id))
     async def fox_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
         sra = SRA(self.bot)
@@ -185,7 +186,7 @@ class Fun(commands.Cog):
     @fun.command(
         name="cat-facts", description="Shows facts about cats with an image as well."
     )
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(2, 5, key = lambda i: (i.guild_id, i.user.id))
     async def cat_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
         sra = SRA(self.bot)
@@ -220,7 +221,7 @@ class Fun(commands.Cog):
         name="koala-facts",
         description="Shows facts about koalas with an image as well.",
     )
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(2, 5, key = lambda i: (i.guild_id, i.user.id))
     async def koala_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
         sra = SRA(self.bot)
@@ -254,7 +255,7 @@ class Fun(commands.Cog):
     @fun.command(
         name="bird-facts", description="Shows facts about birds with an image as well."
     )
-    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    
     async def bird_fact(self, interaction: discord.Interaction) -> None:
         """Shows some facts about animals."""
         sra = SRA(self.bot)
