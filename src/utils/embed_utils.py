@@ -1,6 +1,7 @@
 import random
 
 from discord import Color, Embed
+
 from hyena import Bot
 
 
