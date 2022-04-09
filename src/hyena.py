@@ -176,7 +176,7 @@ class Bot(commands.Bot):
             ("action-logs", "actions", "alogs"): "action-logs",
             ("warns", "warn", "warnings"): "warns",
             ("file-system", "files", "filesys", "file"): "file-system",
-            ("utils", "utilities", "util"): "utilities",
+            ("afk",): "afk",
         }
 
         for alias, cog in aliases.items():
