@@ -177,6 +177,7 @@ not clear the actual warns, just the logs."
 
 
 async def setup(bot):
+    """Setup function for cog"""
     await bot.add_cog(
         ActionLogs(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"])
     )

@@ -111,4 +111,5 @@ class CoreHandlers(commands.Cog):
 
 
 async def setup(bot):
+    """Setup function for cog"""
     await bot.add_cog(CoreHandlers(bot))

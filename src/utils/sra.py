@@ -1,6 +1,9 @@
 import io
+from asyncio.exceptions import TimeoutError
+from typing import Union
 
 import discord
+from aiohttp.client_exceptions import ClientConnectorError
 from discord import Embed, File
 
 
@@ -26,7 +29,7 @@ class SRA:
 
     async def get_image_for(
         self, *, member: discord.Member, endpoint: str, name="image_endpoint"
-    ) -> tuple:
+    ) -> Union[tuple, None]:
         """Returns an embed and the file object containing the given members edited pfp."""
         member_pfp_url = (
             member.avatar.url
@@ -34,13 +37,19 @@ class SRA:
             else member.default_avatar.url
         )
 
-        async with self.bot.session.get(
-            f"https://some-random-api.ml/canvas/{endpoint}?avatar={member_pfp_url}"
-        ) as r:
-            img_byte_object = io.BytesIO(await r.read())
-            file = File(img_byte_object, f"{name}.png")
+        try:
+            async with self.bot.session.get(
+                f"https://some-random-api.ml/canvas/{endpoint}?avatar={member_pfp_url}"
+            ) as r:
+                img_byte_object = io.BytesIO(await r.read())
+                file = File(img_byte_object, f"{name}.png")
 
-            embed = Embed(color=member.color)
-            embed.set_image(url=f"attachment://{name}.png")
+                embed = Embed(color=member.color)
+                embed.set_image(url=f"attachment://{name}.png")
 
-            return (file, embed)
+                return (file, embed)
+        except (
+            TimeoutError,
+            ClientConnectorError,
+        ):
+            return None

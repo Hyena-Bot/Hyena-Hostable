@@ -642,6 +642,7 @@ class Moderation(commands.Cog):
 
 
 async def setup(bot):
+    """Setup function for cog"""
     await bot.add_cog(
         Moderation(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"])
     )

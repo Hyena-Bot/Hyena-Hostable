@@ -259,6 +259,7 @@ class Timeout(commands.Cog):
 
 
 async def setup(bot):
+    """Setup function for cog"""
     await bot.add_cog(
         Timeout(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"])
     )

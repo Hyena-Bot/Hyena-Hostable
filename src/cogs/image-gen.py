@@ -96,9 +96,7 @@ class ImageGen(commands.Cog):
         if not member:
             member = interaction.user
 
-        sra = self.sra(self.bot)
-
-        data = await sra.get_image_for(
+        data = await self.sra.get_image_for(
             member=member, endpoint="passed", name="gta_passed"
         )
 
@@ -113,6 +111,7 @@ class ImageGen(commands.Cog):
 
 
 async def setup(bot):
+    """Setup function for cog"""
     await bot.add_cog(
         ImageGen(bot), guild=discord.Object(id=bot.config["bot_config"]["guild_id"])
     )
