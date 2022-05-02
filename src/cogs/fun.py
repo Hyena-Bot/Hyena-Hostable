@@ -42,6 +42,7 @@ class Fun(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.sra = self.bot.SRA(self.bot)
+        self.category = ["fun"]
 
     # ---------------------------- General Fun cmds go below ------------------------------------
 

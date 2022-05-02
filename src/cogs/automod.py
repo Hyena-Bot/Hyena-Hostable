@@ -43,6 +43,7 @@ class Automoderation(commands.Cog):
         self.caps_limit = self.bot.config["automod_config"]["caps_threshold"]
         self.delete_after = self.bot.config["automod_config"]["delete_message_after"]
         self.mention_limit = self.bot.config["automod_config"]["mention_limit"]
+        self.category = ["moderation"]
 
     def _get_emoji(self, status: bool):
         """Returns the emoji for the given status [True|False]"""

@@ -44,6 +44,7 @@ class Timeout(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.category = ["moderation"]
 
     timeout = app_commands.Group(
         name="timeout", description="Controls for timing out a user"

@@ -44,6 +44,7 @@ class Moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.category = ["moderation"]
 
     @app_commands.command(name="ban", description="Yeet someone out of the server!")
     @app_commands.describe(

@@ -44,6 +44,7 @@ class ImageGen(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.sra = self.bot.SRA(self.bot)
+        self.category = ["fun"]
 
     # ------------------- SRA image gen cmds go below -------------------
 
