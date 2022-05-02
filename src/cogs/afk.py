@@ -12,6 +12,11 @@ class Afk(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._afk = {}
+        self.category = ["utilities"]
+
+    # @property
+    # def category():
+    #     return ["utilities"]
 
     @app_commands.command(
         name="afk",

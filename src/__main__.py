@@ -50,9 +50,9 @@ bot = Bot()  # dont pass in things here, pass in ./hyena.py
 @bot.tree.error
 async def app_command_error(
     interaction: discord.Interaction,
-    command: typing.Union[
-        discord.app_commands.Command, discord.app_commands.ContextMenu
-    ],
+    # command: typing.Union[
+    #     discord.app_commands.Command, discord.app_commands.ContextMenu
+    # ],
     error: discord.app_commands.AppCommandError,
 ):
     """Slash commands error handler"""

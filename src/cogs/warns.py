@@ -46,6 +46,7 @@ class Warnings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._warns_db
+        self.category = ["moderation"]
 
     # helper
 

@@ -135,6 +135,7 @@ class FileSystem(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.category = ["utilities"]
 
     files = app_commands.Group(name="file", description="Make, edit and get files")
 

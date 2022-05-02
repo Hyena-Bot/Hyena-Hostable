@@ -44,6 +44,7 @@ class ActionLogs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._db = self.bot._action_logs_db
+        self.category = ["moderation"]
 
     def _format_log(self, guild: discord.Guild, _action: dict, serial: int) -> str:
         """Format a given log record"""
