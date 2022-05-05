@@ -1,4 +1,5 @@
 from typing import Optional
+from inspect import cleandoc
 
 import discord
 from discord import app_commands
@@ -125,152 +126,199 @@ class Help(commands.Cog):
         self.category = [None]
 
     @app_commands.command(name="help", description="Get bot help!")
+    @app_commands.describe(
+        command="The parent/command to look help for",
+        subcommand="The subcommand to look help for"
+    )
+    @app_commands.checks.cooldown(1, 3, key=lambda i: (i.guild_id, i.user.id))
     async def help(
         self,
         interaction: discord.Interaction,
         command: Optional[str],
         subcommand: Optional[str],
     ):
-        cogs = [self.bot.get_cog(e) for e in self.bot.cogs]
-        util_cogs = [e for e in cogs if "utilities" in e.category]
-        fun_cogs = [e for e in cogs if "fun" in e.category]
-        mod_cogs = [e for e in cogs if "moderation" in e.category]
+        if command:
+            all_commands = {
+                cmd.qualified_name: cmd
+                for cmd in self.bot.tree.walk_commands(
+                    guild=discord.Object(id=self.bot.config["bot_config"]["guild_id"])
+                )
+            }
 
-        name = self.bot.config["bot_config"]["bot_name"].title()
+            _cmd_str = command.lower().strip()
+            _cmd = all_commands.get(_cmd_str)
+            if not _cmd:
+                return await interaction.response.send_message(
+                    f"I cannot find the command `{command}`."
+                )
 
-        def _check_binding(cmd, cog):
-            try:
-                return cmd.binding == cog
-            except AttributeError:
-                return False
+            if isinstance(_cmd, app_commands.Group):
+                if not subcommand:
+                    return await interaction.response.send_message(
+                        "Please type in subcommand if looking for a group."
+                    )
+                _cmd = all_commands.get(f"{_cmd.name} {subcommand.lower().strip()}")
+                if not _cmd:
+                    return await interaction.response.send_message(
+                        f"I cannot find the command `{command} {subcommand}`."
+                    )
 
-        embeds = [
-            discord.Embed(
-                color=self.bot._gen_colors(), timestamp=interaction.created_at
-            )
-            .set_thumbnail(url=self.bot.tools._get_mem_avatar(self.bot.user))
-            .set_footer(
+            embed = discord.Embed(color=self.bot._gen_colors(), timestamp=interaction.created_at)
+            embed.set_thumbnail(url=self.bot.tools._get_mem_avatar(self.bot.user))
+            embed.set_footer(
                 text=f"Requested by {interaction.user} | Prefix: Use / before each command",
                 icon_url=self.bot.tools._get_mem_avatar(interaction.user),
             )
-            for _ in range(4)
-        ]
+            embed.description = f"""
+**/{_cmd.qualified_name}**
 
-        # ------
+{cleandoc(_cmd.callback.__doc__)}
+"""
 
-        embeds[0].set_author(name=f"{name} Help", icon_url=self.bot.user.avatar.url)
-        embeds[0].add_field(
-            name="Navigating the pages:",
-            value="""
-            <:double_left:875244843452989490> Go to first page
-            <:left:875244882799771699> Go back one page
-            🔒 Lock the help screen.
-            <:right:875244926688960533> Go Forward one page
-            <:double_right:875244972318810133> Go to the last page
-            """,
-        )
-        embeds[0].add_field(
-            name=f"❓ | New To {name}?",
-            value=f"`{self.bot.description}`",
-            inline=False,
-        )
-        embeds[0].add_field(
-            name="Contents:",
-            value="**Page 1.** Introduction \n**Page 2.** Utilities \n**Page 3.** Moderation \n**Page 4.** Fun",
-        )
-        embeds[0].add_field(
-            name="Useful Links",
-            value=f"[Project](https://github.com/Hyena-Bot/Hyena-Hostable) | [Dev Server](https://discord.gg/cHYWdK5GNt)",
-        )
-
-        all_commands = [
-            cmd
-            for cmd in self.bot.tree.walk_commands(
-                guild=discord.Object(id=self.bot.config["bot_config"]["guild_id"])
+            await interaction.response.send_message(
+                embed=embed
             )
-        ]
+        else:
+            cogs = [self.bot.get_cog(e) for e in self.bot.cogs]
+            util_cogs = [e for e in cogs if "utilities" in e.category]
+            fun_cogs = [e for e in cogs if "fun" in e.category]
+            mod_cogs = [e for e in cogs if "moderation" in e.category]
 
-        # -------
+            name = self.bot.config["bot_config"]["bot_name"].title()
 
-        command_block = []
+            def _check_binding(cmd, cog):
+                try:
+                    return cmd.binding == cog
+                except AttributeError:
+                    return False
 
-        for cog in util_cogs:
-            commands = [x for x in all_commands if _check_binding(x, cog)]
-            for command in commands:
-                desc = (
-                    command.description.capitalize()[:31] + "..."
-                    if len(command.description) > 34
-                    else command.description
+            embeds = [
+                discord.Embed(
+                    color=self.bot._gen_colors(), timestamp=interaction.created_at
                 )
-                command_block.append(f"`/{command.qualified_name}:` {desc}")
-
-        embeds[1].set_author(
-            name="Tools and Utilities",
-            icon_url="https://cdn.discordapp.com/emojis/844508570813071400.png?v=1",
-        )
-        embeds[1].add_field(
-            name="Commands:", value="\n".join(command_block), inline=False
-        )
-
-        # -------
-
-        command_block = []
-
-        for cog in mod_cogs:
-            commands = [x for x in all_commands if _check_binding(x, cog)]
-            for command in commands:
-                desc = (
-                    command.description.capitalize()[:31] + "..."
-                    if len(command.description) > 34
-                    else command.description
+                .set_thumbnail(url=self.bot.tools._get_mem_avatar(self.bot.user))
+                .set_footer(
+                    text=f"Requested by {interaction.user} | Prefix: Use / before each command",
+                    icon_url=self.bot.tools._get_mem_avatar(interaction.user),
                 )
-                command_block.append(f"`/{command.qualified_name}:` {desc}")
+                for _ in range(4)
+            ]
 
-        embeds[2].set_author(
-            name="Moderation",
-            icon_url="https://cdn.discordapp.com/emojis/832104988046000178.png?v=1",
-        )
-        embeds[2].add_field(
-            name="Commands:", value="\n".join(command_block), inline=False
-        )
+            # ------
 
-        # -------
+            embeds[0].set_author(name=f"{name} Help", icon_url=self.bot.user.avatar.url)
+            embeds[0].add_field(
+                name="Navigating the pages:",
+                value="""
+                <:double_left:875244843452989490> Go to first page
+                <:left:875244882799771699> Go back one page
+                🔒 Lock the help screen.
+                <:right:875244926688960533> Go Forward one page
+                <:double_right:875244972318810133> Go to the last page
+                """,
+            )
+            embeds[0].add_field(
+                name=f"❓ | New To {name}?",
+                value=f"`{self.bot.description}`",
+                inline=False,
+            )
+            embeds[0].add_field(
+                name="Contents:",
+                value="**Page 1.** Introduction \n**Page 2.** Utilities \n**Page 3.** Moderation \n**Page 4.** Fun",
+            )
+            embeds[0].add_field(
+                name="Useful Links",
+                value=f"[Project](https://github.com/Hyena-Bot/Hyena-Hostable) | [Dev Server](https://discord.gg/cHYWdK5GNt)",
+            )
 
-        command_block = []
-
-        for cog in fun_cogs:
-            commands = [x for x in all_commands if _check_binding(x, cog)]
-            for command in commands:
-                desc = (
-                    command.description.capitalize()[:31] + "..."
-                    if len(command.description) > 34
-                    else command.description
+            all_commands = [
+                cmd
+                for cmd in self.bot.tree.walk_commands(
+                    guild=discord.Object(id=self.bot.config["bot_config"]["guild_id"])
                 )
-                command_block.append(f"`/{command.qualified_name}:` {desc}")
+            ]
 
-        embeds[3].set_author(
-            name="Fun",
-            icon_url="https://cdn.discordapp.com/emojis/844509126095929354.png?v=1",
-        )
-        embeds[3].add_field(
-            name="Commands:", value="\n".join(command_block), inline=False
-        )
+            # -------
 
-        # -------
+            command_block = []
 
-        helps = {
-            "1": embeds[0],
-            "2": embeds[1],
-            "3": embeds[2],
-            "4": embeds[3],
-            "home": embeds[0],
-            "utils": embeds[1],
-            "moderation": embeds[2],
-            "fun": embeds[3],
-        }
+            for cog in util_cogs:
+                commands = [x for x in all_commands if _check_binding(x, cog)]
+                for command in commands:
+                    desc = (
+                        command.description.capitalize()[:31] + "..."
+                        if len(command.description) > 34
+                        else command.description
+                    )
+                    command_block.append(f"`/{command.qualified_name}:` {desc}")
 
-        view = HelpView(interaction.user, helps)
-        await interaction.response.send_message(embed=helps["1"], view=view)
+            embeds[1].set_author(
+                name="Tools and Utilities",
+                icon_url="https://cdn.discordapp.com/emojis/844508570813071400.png?v=1",
+            )
+            embeds[1].add_field(
+                name="Commands:", value="\n".join(command_block), inline=False
+            )
+
+            # -------
+
+            command_block = []
+
+            for cog in mod_cogs:
+                commands = [x for x in all_commands if _check_binding(x, cog)]
+                for command in commands:
+                    desc = (
+                        command.description.capitalize()[:31] + "..."
+                        if len(command.description) > 34
+                        else command.description
+                    )
+                    command_block.append(f"`/{command.qualified_name}:` {desc}")
+
+            embeds[2].set_author(
+                name="Moderation",
+                icon_url="https://cdn.discordapp.com/emojis/832104988046000178.png?v=1",
+            )
+            embeds[2].add_field(
+                name="Commands:", value="\n".join(command_block), inline=False
+            )
+
+            # -------
+
+            command_block = []
+
+            for cog in fun_cogs:
+                commands = [x for x in all_commands if _check_binding(x, cog)]
+                for command in commands:
+                    desc = (
+                        command.description.capitalize()[:31] + "..."
+                        if len(command.description) > 34
+                        else command.description
+                    )
+                    command_block.append(f"`/{command.qualified_name}:` {desc}")
+
+            embeds[3].set_author(
+                name="Fun",
+                icon_url="https://cdn.discordapp.com/emojis/844509126095929354.png?v=1",
+            )
+            embeds[3].add_field(
+                name="Commands:", value="\n".join(command_block), inline=False
+            )
+
+            # -------
+
+            helps = {
+                "1": embeds[0],
+                "2": embeds[1],
+                "3": embeds[2],
+                "4": embeds[3],
+                "home": embeds[0],
+                "utils": embeds[1],
+                "moderation": embeds[2],
+                "fun": embeds[3],
+            }
+
+            view = HelpView(interaction.user, helps)
+            await interaction.response.send_message(embed=helps["1"], view=view)
 
 
 async def setup(bot):
