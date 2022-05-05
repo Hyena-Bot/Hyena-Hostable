@@ -1,5 +1,5 @@
-from typing import Optional
 from inspect import cleandoc
+from typing import Optional
 
 import discord
 from discord import app_commands
@@ -128,7 +128,7 @@ class Help(commands.Cog):
     @app_commands.command(name="help", description="Get bot help!")
     @app_commands.describe(
         command="The parent/command to look help for",
-        subcommand="The subcommand to look help for"
+        subcommand="The subcommand to look help for",
     )
     @app_commands.checks.cooldown(1, 3, key=lambda i: (i.guild_id, i.user.id))
     async def help(
@@ -163,7 +163,9 @@ class Help(commands.Cog):
                         f"I cannot find the command `{command} {subcommand}`."
                     )
 
-            embed = discord.Embed(color=self.bot._gen_colors(), timestamp=interaction.created_at)
+            embed = discord.Embed(
+                color=self.bot._gen_colors(), timestamp=interaction.created_at
+            )
             embed.set_thumbnail(url=self.bot.tools._get_mem_avatar(self.bot.user))
             embed.set_footer(
                 text=f"Requested by {interaction.user} | Prefix: Use / before each command",
@@ -172,12 +174,14 @@ class Help(commands.Cog):
             embed.description = f"""
 **/{_cmd.qualified_name}**
 
+**Cog & Category:**
+{_cmd.binding.qualified_name.title()}
+- `{_cmd.binding.category[0].title()}`
+
 {cleandoc(_cmd.callback.__doc__)}
 """
 
-            await interaction.response.send_message(
-                embed=embed
-            )
+            await interaction.response.send_message(embed=embed)
         else:
             cogs = [self.bot.get_cog(e) for e in self.bot.cogs]
             util_cogs = [e for e in cogs if "utilities" in e.category]
