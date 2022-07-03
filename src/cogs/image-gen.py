@@ -110,6 +110,192 @@ class ImageGen(commands.Cog):
 
         await interaction.followup.send(embed=embed, file=file)
 
+    @image_gen.command(
+        name="triggered",
+        description="A triggered meme of the given user.",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        member="The member whose image to edit, defaults to the cmd invoker."
+    )
+    async def _triggered(
+        self, interaction: discord.Interaction, member: Optional[discord.Member] = None
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_image_for(
+            member=member, endpoint="triggered", name="triggered"
+        )
+
+        file: discord.File = data[0]
+
+        embed: discord.Embed = data[1]
+        embed.title = "Triggered"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
+    @image_gen.command(
+        name="jail",
+        description="Put the given user in jail.",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        member="The member whose image to edit, defaults to the cmd invoker."
+    )
+    async def _jail(
+        self, interaction: discord.Interaction, member: Optional[discord.Member] = None
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_image_for(member=member, endpoint="jail", name="jail")
+
+        file: discord.File = data[0]
+
+        embed: discord.Embed = data[1]
+        embed.title = f"Put {member.name} in jail!"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
+    @image_gen.command(
+        name="comrade",
+        description="Make someone join the soviet union.",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        member="The member whose image to edit, defaults to the cmd invoker."
+    )
+    async def _comrade(
+        self, interaction: discord.Interaction, member: Optional[discord.Member] = None
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_image_for(
+            member=member, endpoint="comrade", name="comrade"
+        )
+
+        file: discord.File = data[0]
+
+        embed: discord.Embed = data[1]
+        embed.title = f"Посмотрите на нас, все возможно"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
+    @image_gen.command(
+        name="pixelate",
+        description="Pixels, Gotta love em'.",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        member="The member whose image to edit, defaults to the cmd invoker."
+    )
+    async def _pixelate(
+        self, interaction: discord.Interaction, member: Optional[discord.Member] = None
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_image_for(
+            member=member, endpoint="pixelate", name="pixelate"
+        )
+
+        file: discord.File = data[0]
+
+        embed: discord.Embed = data[1]
+        embed.title = f"144p"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
+    @image_gen.command(
+        name="youtube",
+        description="Comment something on youtube?",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        comment="The comment to print.",
+        member="The member who sent the comment, defaults to the cmd invoker.",
+    )
+    async def _yt_comment(
+        self,
+        interaction: discord.Interaction,
+        comment: str,
+        member: Optional[discord.Member] = None,
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_data_for(
+            endpoint=f"youtube-comment?avatar={self.bot.tools._get_mem_avatar(member)}&username={member.name}&comment={comment}",
+            name="yt",
+        )
+
+        file: discord.File = data
+
+        embed = discord.Embed(color=member.color)
+        embed.set_image(url=f"attachment://yt.png")
+        embed.title = f"{member.name} Just commented"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
+    @image_gen.command(
+        name="tweet",
+        description="Tweet something?",
+    )
+    @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        tweet="The tweet to print.",
+        display_name="Display name for your tweet.",
+        member="The member who sent the tweet. defaults to the cmd invoker.",
+    )
+    async def _tweet(
+        self,
+        interaction: discord.Interaction,
+        tweet: str,
+        display_name: str = None,
+        member: Optional[discord.Member] = None,
+    ) -> None:
+        """Manipulate the given users pfp via various api's."""
+        await interaction.response.defer()
+        if not member:
+            member = interaction.user
+
+        data = await self.sra.get_data_for(
+            endpoint=f"tweet?avatar={self.bot.tools._get_mem_avatar(member)}&displayname={display_name or ('@' + member.name)}&username={member.name}&comment={tweet}",
+            name="tweet",
+        )
+
+        file: discord.File = data
+
+        embed = discord.Embed(color=member.color)
+        embed.set_image(url=f"attachment://tweet.png")
+        embed.title = f"{member.name} Just tweeted"
+
+        embed.set_footer(text=f"Requested by: {interaction.user}")
+
+        await interaction.followup.send(embed=embed, file=file)
+
 
 async def setup(bot):
     """Setup function for cog"""
