@@ -179,7 +179,7 @@ class Bot(commands.Bot):
             ("file-system", "files", "filesys", "file"): "file-system",
             ("afk",): "afk",
             ("fun", "fun-commands"): "fun",
-            ("images", "image", "gen", "image-gen"): "image-gen",
+            ("images", "image", "gen", "image-gen", "img", "img-gen"): "image-gen",
         }
 
         for alias, cog in aliases.items():

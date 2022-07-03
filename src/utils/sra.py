@@ -3,7 +3,7 @@ from asyncio.exceptions import TimeoutError
 from typing import Union
 
 import discord
-from aiohttp.client_exceptions import ClientConnectorError
+from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from discord import Embed, File
 
 
@@ -15,7 +15,9 @@ class SRA:
 
     async def get_data_for(self, endpoint: str, *, name: str = "endpoint") -> dict:
         """Gets data from some random api for the given endpoint."""
-        async with self.bot.session.get(endpoint) as r:
+        async with self.bot.session.get(
+            "https://some-random-api.ml/canvas/" + endpoint
+        ) as r:
             if not 300 > r.status >= 200:
                 error_msg = (
                     "API timed out with response code: `{r.status}`."
@@ -24,8 +26,15 @@ class SRA:
                 )
                 return {"error": error_msg}
             else:
-                results: dict = await r.json()
-                return results
+                try:
+                    results: dict = await r.json()
+                except ContentTypeError:
+                    img_byte_object = io.BytesIO(await r.read())
+                    file = File(img_byte_object, f"{name}.png")
+
+                    return file
+                else:
+                    return results
 
     async def get_image_for(
         self, *, member: discord.Member, endpoint: str, name="image_endpoint"
