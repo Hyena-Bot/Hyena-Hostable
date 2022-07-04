@@ -77,5 +77,5 @@ def _get_guild_icon(interaction: discord.Interaction):
 
 def _get_mem_avatar(user):
     if not user.avatar:
-        return GRAYSCALE_NOICON_REVERT
+        return user.default_avatar
     return user.avatar.with_format("png").url
