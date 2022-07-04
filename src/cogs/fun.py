@@ -31,6 +31,8 @@ Kindly check out ../LICENSE
 """
 
 
+import re
+
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -173,6 +175,126 @@ class Fun(commands.Cog):
             await interaction.response.send_message(
                 f"Could not fetch the results for `{name}`, try again later."
             )
+
+    @app_commands.command(name="embed", description="Generate an embed.")
+    @app_commands.describe(
+        title="Title of the embed",
+        description="Description of the embed",
+        color="Color in hex or defaults eg. '#FFFFFF' or 'white'",
+        footer="Footer for the embed.",
+        image_url="URL for a thumbnail.",
+    )
+    @app_commands.checks.cooldown(1, 5, key=lambda i: (i.guild_id, i.user.id))
+    async def _embed(
+        self,
+        interaction: discord.Interaction,
+        title: str,
+        description: str,
+        color: str = None,
+        footer: str = None,
+        image_url: str = None,
+    ):
+        """
+        **Description:**
+        Generate an embed.
+
+        **Args:**
+        • `<title>` - Title of the embed
+        • `<description>` - Description of the embed
+        • `[color]` - Color in hex or defaults eg. '#FFFFFF' or 'white'
+        • `[footer]` - Footer for the embed.
+        • `[image_url]` - URL for a thumbnail.
+
+        **Syntax:**
+        ```
+        /embed <title> <description> [color] [footer] [image_url]
+        ```
+        """
+        embed = discord.Embed(title=title, description=description)
+        if footer:
+            embed.set_footer(text=footer)
+        if image_url:
+            embed.set_thumbnail(url=image_url)
+        if color:
+            if color[0] == "#":
+                color = color.replace("#", "0x")
+            try:
+                color = int(color, 16)
+            except ValueError as e:
+                basic_colors = {
+                    "blue": 0x0000FF,
+                    "pink": 0xFFB6C1,
+                    "purple": 0x800080,
+                    "green": 0x00FF00,
+                    "white": 0xFFFFFF,
+                    "black": 0x000000,
+                    "grey": 0x797373,
+                    "red": 0xFF0000,
+                }
+
+                _color = basic_colors.get(color)
+                if _color:
+                    color = _color
+                else:
+                    return await interaction.response.send_message(
+                        (
+                            f"Your color `{color}` is not a valid hex code or a basic color.\n"
+                            "Example of a valid hex code: `#FFFFFF`, `#000000`\n"
+                            "Basic colors:\n`blue`, `pink`\n`purple`, `green`\n`white`, `black`\n`grey`, `red`"
+                        )
+                    )
+
+        embed.color = color or self.bot._gen_colors()
+        try:
+            await interaction.response.send_message("Creating!")
+            await interaction.delete_original_message()
+            await interaction.channel.send(embed=embed)
+        except Exception as e:
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    color=discord.Color.red(),
+                    title=" ".join(
+                        re.compile(r"[A-Z][a-z]*").findall(e.__class__.__name__)
+                    ),
+                    description=str(e),
+                )
+            )
+
+    @app_commands.command(
+        name="reply", description="Reply to a specific message using me."
+    )
+    @app_commands.checks.cooldown(1, 3, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.describe(
+        message_id="The message ID to reply to.", message="The reply"
+    )
+    async def _reply(
+        self, interaction: discord.Interaction, message_id: str, message: str
+    ):
+        """
+        **Description:**
+        Reply to a specific message using me.
+
+        **Args:**
+        • `<message_id>` - The message ID to reply to.
+        • `<message>` - The Reply
+
+        **Syntax:**
+        ```
+        /reply <message_id> <message>
+        ```
+        """
+        try:
+            msg = await interaction.channel.fetch_message(int(message_id))
+        except (discord.errors.NotFound, ValueError):
+            return await interaction.response.send_message(
+                "Can't find your referenced message, use a correct ID."
+            )
+
+        await interaction.response.send_message("Okay!")
+        await interaction.delete_original_message()
+        await msg.reply(
+            message, allowed_mentions=discord.AllowedMentions(replied_user=False)
+        )
 
 
 async def setup(bot):

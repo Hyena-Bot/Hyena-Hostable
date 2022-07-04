@@ -63,7 +63,18 @@ class ImageGen(commands.Cog):
     async def _wasted(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Create a GTA inspired wasted image of the user.
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image wasted [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -92,7 +103,18 @@ class ImageGen(commands.Cog):
     async def _passed(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Create a GTA inspired mission passed image of the user.
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image passed [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -121,7 +143,18 @@ class ImageGen(commands.Cog):
     async def _triggered(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        A triggered meme of the given user
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image triggered [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -141,7 +174,7 @@ class ImageGen(commands.Cog):
 
     @image_gen.command(
         name="jail",
-        description="Put the given user in jail.",
+        description="Put a given user in jail.",
     )
     @app_commands.checks.cooldown(2, 5, key=lambda i: (i.guild_id, i.user.id))
     @app_commands.describe(
@@ -150,7 +183,18 @@ class ImageGen(commands.Cog):
     async def _jail(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Put a given user in jail.
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image jail [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -177,7 +221,18 @@ class ImageGen(commands.Cog):
     async def _comrade(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Make someone join the soviet union.
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image comrade [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -206,7 +261,18 @@ class ImageGen(commands.Cog):
     async def _pixelate(
         self, interaction: discord.Interaction, member: Optional[discord.Member] = None
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Pixels, Gotta love em'.
+
+        **Args:**
+        • `[member]` -The member whose image to edit, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image pixels [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -239,7 +305,19 @@ class ImageGen(commands.Cog):
         comment: str,
         member: Optional[discord.Member] = None,
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Comment something on youtube?
+
+        **Args:**
+        • `<comment>` - The comment to print.
+        • `[member]` - The member who sent the comment, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image youtube <comment> [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
@@ -276,7 +354,20 @@ class ImageGen(commands.Cog):
         display_name: str = None,
         member: Optional[discord.Member] = None,
     ) -> None:
-        """Manipulate the given users pfp via various api's."""
+        """
+        **Description:**
+        Tweet something on twitter?
+
+        **Args:**
+        • `<tweet>` - The tweet to print.
+        • `[display_name]` - Display name for your tweet.
+        • `[member]` - The member who sent the comment, defaults to the cmd invoker.
+
+        **Syntax:**
+        ```
+        /image tweet <tweet> [display_name [member]
+        ```
+        """
         await interaction.response.defer()
         if not member:
             member = interaction.user
