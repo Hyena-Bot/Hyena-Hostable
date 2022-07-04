@@ -1,7 +1,7 @@
 bot_config:
     bot_name: Hyena # your bot's name
     bot_description: The customisable and self hostable Hyena. # your bot's description'
-    bot_version: "1.0.0rc" # bot version goes here
+    bot_version: "1.0.0a" # bot version goes here
     bot_prefix: "-" # your bot's prefix in quotation marks 
     owners_id: # the IDs of the owners of the bots
         - 711444754080071714
