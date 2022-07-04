@@ -43,7 +43,7 @@ import yaml
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
-from utils import action_logger, automod_class, checks, sra, tools
+from utils import action_logger, automod_class, sra, tools
 
 load_dotenv()
 
@@ -89,7 +89,6 @@ class Bot(commands.Bot):
         )
 
         self.tools = tools
-        self.checks = checks
         self._action_logs_db = None
         self._action_logger = None
         self.AutomodHandler = None
@@ -180,6 +179,7 @@ class Bot(commands.Bot):
             ("afk",): "afk",
             ("fun", "fun-commands"): "fun",
             ("images", "image", "gen", "image-gen", "img", "img-gen"): "image-gen",
+            ("utils", "utilities", "util"): "utilities",
         }
 
         for alias, cog in aliases.items():

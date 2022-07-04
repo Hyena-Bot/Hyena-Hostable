@@ -36,8 +36,8 @@ def convert_time(arg):
     if not time_data:
         raise commands.BadArgument(
             "The time provided is not valid, use proper times with their corresponding units `[s|m|h|d|w]`.\
-            \nex. `/timeout add @Donut 10 days 5 seconds`\
-            \n      `/timeout add @Donut 1w`"
+            \nex. `/command ... 10 days 5 seconds`\
+            \n      `/command ... 10s`"
         )
 
     return res
