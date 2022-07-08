@@ -323,7 +323,7 @@ class ImageGen(commands.Cog):
             member = interaction.user
 
         data = await self.sra.get_data_for(
-            endpoint=f"youtube-comment?avatar={self.bot.tools._get_mem_avatar(member)}&username={member.name}&comment={comment}",
+            endpoint=f"canvas/youtube-comment?avatar={self.bot.tools._get_mem_avatar(member)}&username={member.name}&comment={comment}",
             name="yt",
         )
 
@@ -373,7 +373,7 @@ class ImageGen(commands.Cog):
             member = interaction.user
 
         data = await self.sra.get_data_for(
-            endpoint=f"tweet?avatar={self.bot.tools._get_mem_avatar(member)}&displayname={display_name or ('@' + member.name)}&username={member.name}&comment={tweet}",
+            endpoint=f"canvas/tweet?avatar={self.bot.tools._get_mem_avatar(member)}&displayname={display_name or ('@' + member.name)}&username={member.name}&comment={tweet}",
             name="tweet",
         )
 

@@ -15,12 +15,10 @@ class SRA:
 
     async def get_data_for(self, endpoint: str, *, name: str = "endpoint") -> dict:
         """Gets data from some random api for the given endpoint."""
-        async with self.bot.session.get(
-            "https://some-random-api.ml/canvas/" + endpoint
-        ) as r:
+        async with self.bot.session.get("https://some-random-api.ml/" + endpoint) as r:
             if not 300 > r.status >= 200:
                 error_msg = (
-                    "API timed out with response code: `{r.status}`."
+                    f"API timed out with response code: `{r.status}`."
                     if r.status != 404
                     else f"The `{name}` you gave could not be found."
                 )

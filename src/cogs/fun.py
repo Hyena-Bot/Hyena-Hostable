@@ -65,7 +65,7 @@ class Fun(commands.Cog):
         ```
         """
         results = await self.sra.get_data_for(
-            f"https://some-random-api.ml/pokedex?pokemon={pokemon}", name="pokemon"
+            f"pokedex?pokemon={pokemon}", name="pokemon"
         )
         if results:
             if results.get("error") is not None:
@@ -153,7 +153,7 @@ class Fun(commands.Cog):
 
         name = f"{animal.title()} facts"
         results = await self.sra.get_data_for(
-            f"https://some-random-api.ml/animal/{_paths.get(animal) or animal}",
+            f"animal/{_paths.get(animal) or animal}",
             name=name,
         )
 
